@@ -6,458 +6,411 @@
 <title>MIS 工作管理系統</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #f0f4ff;
-  --surface: #ffffff;
-  --surface2: #f7f9ff;
-  --border: #e2e8f8;
-  --primary: #5b6ef5;
-  --primary-light: #eef0ff;
-  --accent: #ff7c5c;
-  --accent-light: #fff1ee;
-  --green: #34c98b;
-  --green-light: #edfaf4;
-  --yellow: #fbbf24;
-  --yellow-light: #fffbeb;
-  --purple: #a78bfa;
-  --purple-light: #f5f3ff;
-  --red: #f87171;
-  --red-light: #fef2f2;
-  --text: #1e2a4a;
-  --text2: #5a6a8a;
-  --text3: #9aaabb;
-  --shadow: 0 2px 16px rgba(91,110,245,0.08);
-  --shadow-lg: 0 8px 32px rgba(91,110,245,0.14);
-  --radius: 16px;
-  --radius-sm: 10px;
-  --nav-h: 64px;
-  --font-base: 15px;
-  --font-sm: 13px;
-  --font-xs: 12px;
+:root{
+  --bg:#f0f4ff;--surface:#fff;--surface2:#f7f9ff;--border:#e2e8f8;
+  --primary:#5b6ef5;--primary-light:#eef0ff;
+  --accent:#ff7c5c;--accent-light:#fff1ee;
+  --green:#34c98b;--green-light:#edfaf4;
+  --yellow:#fbbf24;--yellow-light:#fffbeb;
+  --purple:#a78bfa;--purple-light:#f5f3ff;
+  --red:#f87171;--red-light:#fef2f2;
+  --text:#1e2a4a;--text2:#5a6a8a;--text3:#9aaabb;
+  --shadow:0 2px 16px rgba(91,110,245,.08);
+  --shadow-lg:0 8px 32px rgba(91,110,245,.15);
+  --radius:16px;--rsm:10px;
+  --nav-h:60px;
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:var(--font-base)}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
 
-/* ===== TOP NAV (mobile-first) ===== */
-.top-nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--surface);border-bottom:1px solid var(--border);z-index:200;box-shadow:0 2px 12px rgba(91,110,245,0.07)}
-.top-nav-inner{height:100%;display:flex;align-items:center;gap:0;overflow-x:auto;padding:0 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.top-nav-inner::-webkit-scrollbar{display:none}
-.nav-logo{font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;color:var(--primary);white-space:nowrap;padding:0 12px 0 8px;border-right:1px solid var(--border);margin-right:6px;flex-shrink:0}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.18s;white-space:nowrap;flex-shrink:0;scroll-snap-align:start;min-width:60px}
-.nav-item .nav-icon{font-size:20px;line-height:1}
-.nav-item .nav-label{font-size:11px;font-weight:700;color:var(--text2)}
-.nav-item:hover{background:var(--primary-light)}
-.nav-item:hover .nav-label{color:var(--primary)}
-.nav-item.active{background:var(--primary)}
-.nav-item.active .nav-label{color:#fff}
+/* ── TOP NAV ── */
+.top-nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--surface);border-bottom:1px solid var(--border);z-index:200;box-shadow:0 2px 10px rgba(91,110,245,.06)}
+.nav-inner{height:100%;display:flex;align-items:center;padding:0 8px;overflow-x:auto;scrollbar-width:none;gap:2px}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-logo{font-family:'Nunito',sans-serif;font-size:15px;font-weight:900;color:var(--primary);white-space:nowrap;padding:0 14px 0 6px;border-right:1px solid var(--border);margin-right:4px;flex-shrink:0;line-height:1.2}
+.nav-logo small{display:block;font-size:10px;color:var(--text3);font-weight:600}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 12px;border-radius:var(--rsm);cursor:pointer;transition:all .18s;flex-shrink:0;min-width:54px}
+.nav-btn .ni{font-size:19px;line-height:1}
+.nav-btn .nl{font-size:11px;font-weight:700;color:var(--text2);white-space:nowrap}
+.nav-btn:hover{background:var(--primary-light)}
+.nav-btn:hover .nl{color:var(--primary)}
+.nav-btn.active{background:var(--primary)}
+.nav-btn.active .nl{color:#fff}
 
-/* ===== MAIN ===== */
-.main{margin-top:var(--nav-h);padding:20px 16px 32px;max-width:1200px;margin-left:auto;margin-right:auto}
-.page{display:none}
-.page.active{display:block}
+/* ── MAIN ── */
+.main{margin-top:var(--nav-h);padding:20px 16px 40px;max-width:1200px;margin-left:auto;margin-right:auto}
+@media(min-width:900px){.main{padding:26px 32px 48px}}
+.page{display:none}.page.active{display:block}
 
-/* ===== COMMON ===== */
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
-.page-title{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--text)}
-.page-title span{color:var(--primary)}
-
-.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:var(--radius-sm);border:none;cursor:pointer;font-size:var(--font-base);font-weight:700;font-family:'Noto Sans TC',sans-serif;transition:all 0.18s;white-space:nowrap}
-.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(91,110,245,0.28)}
-.btn-primary:hover{background:#4a5de0;transform:translateY(-1px)}
-.btn-ghost{background:transparent;color:var(--text2);border:1.5px solid var(--border)}
-.btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
-.btn-danger{background:var(--red-light);color:var(--red);border:none}
-.btn-success{background:var(--green-light);color:var(--green);border:none}
-.btn-sm{padding:7px 14px;font-size:var(--font-sm)}
-.btn-xs{padding:5px 10px;font-size:var(--font-xs)}
-
+/* ── UTILS ── */
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.pt{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900}.pt span{color:var(--primary)}
 .card{background:var(--surface);border-radius:var(--radius);padding:18px;border:1px solid var(--border);box-shadow:var(--shadow)}
-.card-title{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ct{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
 
-.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:var(--font-xs);font-weight:700}
-.badge-blue{background:var(--primary-light);color:var(--primary)}
-.badge-orange{background:var(--accent-light);color:var(--accent)}
-.badge-green{background:var(--green-light);color:var(--green)}
-.badge-yellow{background:var(--yellow-light);color:#b45309}
-.badge-purple{background:var(--purple-light);color:#7c3aed}
-.badge-red{background:var(--red-light);color:var(--red)}
-.badge-gray{background:#f1f5f9;color:#64748b}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:var(--rsm);border:none;cursor:pointer;font-size:14px;font-weight:700;font-family:'Noto Sans TC',sans-serif;transition:all .18s;white-space:nowrap}
+.btn-p{background:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(91,110,245,.28)}
+.btn-p:hover{background:#4a5de0;transform:translateY(-1px)}
+.btn-g{background:transparent;color:var(--text2);border:1.5px solid var(--border)}
+.btn-g:hover{border-color:var(--primary);color:var(--primary)}
+.btn-d{background:var(--red-light);color:var(--red);border:none}
+.btn-ok{background:var(--green-light);color:var(--green);border:none}
+.btn-sm{padding:7px 13px;font-size:13px}
+.btn-xs{padding:5px 9px;font-size:12px}
 
-.table-wrap{overflow-x:auto;border-radius:var(--radius-sm);border:1px solid var(--border)}
-table{width:100%;border-collapse:collapse;font-size:var(--font-sm)}
-th{background:var(--surface2);padding:11px 14px;text-align:left;font-weight:700;color:var(--text2);font-size:var(--font-xs);border-bottom:1px solid var(--border);white-space:nowrap}
-td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;font-size:var(--font-sm)}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:700}
+.bb{background:var(--primary-light);color:var(--primary)}
+.bo{background:var(--accent-light);color:var(--accent)}
+.bg{background:var(--green-light);color:var(--green)}
+.by{background:var(--yellow-light);color:#b45309}
+.bp{background:var(--purple-light);color:#7c3aed}
+.br{background:var(--red-light);color:var(--red)}
+.bgr{background:#f1f5f9;color:#64748b}
+
+.fbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.fsel{padding:9px 13px;border:1.5px solid var(--border);border-radius:var(--rsm);font-size:13px;font-family:'Noto Sans TC',sans-serif;color:var(--text2);background:var(--surface);cursor:pointer;outline:none}
+.fsel:focus{border-color:var(--primary)}
+.finp{padding:9px 13px;border:1.5px solid var(--border);border-radius:var(--rsm);font-size:13px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--surface);outline:none;flex:1;min-width:160px}
+.finp:focus{border-color:var(--primary)}
+
+/* ── FORM ── */
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:13px;font-weight:700;color:var(--text2);margin-bottom:5px}
+.fc{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--rsm);font-size:14px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--surface);transition:border-color .18s;outline:none}
+.fc:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(91,110,245,.1)}
+textarea.fc{resize:vertical;min-height:72px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.fr{grid-template-columns:1fr}}
+
+/* ── MODAL ── */
+.mo{position:fixed;inset:0;background:rgba(10,20,60,.42);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
+.mo.open{display:flex}
+.md{background:var(--surface);border-radius:var(--radius);padding:24px;width:100%;max-width:620px;box-shadow:var(--shadow-lg);animation:mIn .2s ease;margin:auto}
+@keyframes mIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.mh{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;margin-bottom:18px;color:var(--text)}
+.mf{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+
+/* ── TABLE ── */
+.tw{overflow-x:auto;border-radius:var(--rsm);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--surface2);padding:10px 13px;text-align:left;font-weight:700;color:var(--text2);font-size:12px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:11px 13px;border-bottom:1px solid var(--border);color:var(--text);font-size:13px;vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:var(--surface2)}
 
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:16px;background:var(--text);color:#fff;padding:12px 18px;border-radius:var(--rsm);font-size:14px;font-weight:600;z-index:9999;animation:tIn .25s ease;box-shadow:var(--shadow-lg)}
+@keyframes tIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-.filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-.filter-select{padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:var(--font-sm);font-family:'Noto Sans TC',sans-serif;color:var(--text2);background:var(--surface);cursor:pointer;outline:none}
-.filter-select:focus{border-color:var(--primary)}
-.search-input{padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:var(--font-sm);font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--surface);outline:none;min-width:180px;flex:1}
-.search-input:focus{border-color:var(--primary)}
-
-/* FORM */
-.form-group{margin-bottom:14px}
-.form-label{display:block;font-size:var(--font-sm);font-weight:700;color:var(--text2);margin-bottom:6px}
-.form-control{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:var(--font-base);font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--surface);transition:border-color 0.18s;outline:none}
-.form-control:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(91,110,245,0.1)}
-textarea.form-control{resize:vertical;min-height:80px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(10,20,60,0.4);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto}
-.modal-overlay.open{display:flex}
-.modal{background:var(--surface);border-radius:var(--radius);padding:24px;width:100%;max-width:600px;box-shadow:var(--shadow-lg);animation:modalIn 0.2s ease;margin:auto}
-@keyframes modalIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.modal-title{font-family:'Nunito',sans-serif;font-size:19px;font-weight:900;margin-bottom:20px;color:var(--text)}
-.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-
-/* ===== DASHBOARD ===== */
-.hero-banner{background:linear-gradient(135deg,#5b6ef5 0%,#7c5cf5 100%);border-radius:var(--radius);padding:20px 22px;color:#fff;margin-bottom:16px;display:flex;align-items:flex-start;gap:16px;position:relative;overflow:hidden}
-.hero-banner::before{content:'';position:absolute;right:-30px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.07)}
+/* ────────────────────────────────
+   DASHBOARD
+──────────────────────────────── */
+.hero{background:linear-gradient(135deg,#5b6ef5,#7c5cf5);border-radius:var(--radius);padding:18px 20px;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-30px;top:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.07)}
 .hero-left{flex:1;min-width:0}
-.hero-date{font-size:var(--font-sm);opacity:0.8;margin-bottom:3px}
-.hero-greeting{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;margin-bottom:4px}
-.hero-quote{font-size:var(--font-sm);opacity:0.75;font-style:italic;line-height:1.5;cursor:pointer;border-bottom:1px dashed rgba(255,255,255,0.4);padding-bottom:4px;display:inline-block}
+.hero-line1{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hero-title{font-family:'Nunito',sans-serif;font-size:19px;font-weight:900;white-space:nowrap}
+.hero-quote{font-size:13px;opacity:.78;font-style:italic;cursor:pointer;border-bottom:1px dashed rgba(255,255,255,.4);display:inline}
+.hero-line2{font-size:12px;opacity:.7;margin-top:5px}
+.hero-photo{width:68px;height:68px;border-radius:var(--rsm);object-fit:cover;border:2.5px solid rgba(255,255,255,.35);cursor:pointer;flex-shrink:0;position:relative;z-index:1;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden}
+.hero-photo img{width:100%;height:100%;object-fit:cover;display:none}
+.hero-photo:hover::after{content:'📷';position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:22px;border-radius:var(--rsm)}
 
-/* 偶像照片大框 */
-.idol-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;cursor:pointer;position:relative;min-height:220px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
-.idol-card img{width:100%;height:100%;object-fit:cover;display:block;min-height:220px;max-height:360px}
-.idol-placeholder{display:flex;flex-direction:column;align-items:center;gap:10px;padding:40px;color:var(--text3)}
-.idol-placeholder .idol-icon{font-size:56px}
-.idol-placeholder p{font-size:var(--font-sm);font-weight:600}
-.idol-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.35);display:none;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:#fff;font-weight:700;font-size:var(--font-sm)}
-.idol-card:hover .idol-overlay{display:flex}
+.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:700px){.dash-row{grid-template-columns:1fr}}
 
-/* 例行任務 */
-.routine-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--surface2);border:1.5px solid var(--border);transition:all 0.18s;cursor:pointer;margin-bottom:8px}
-.routine-item.done{opacity:0.5}
-.routine-item.done .routine-name{text-decoration:line-through;color:var(--text3)}
-.routine-check{width:24px;height:24px;border-radius:7px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:var(--surface);transition:all 0.18s}
-.routine-item.done .routine-check{background:var(--green);border-color:var(--green);color:#fff}
-.routine-name{font-size:var(--font-base);font-weight:600;flex:1}
-.routine-tag{font-size:11px;color:var(--text3);font-weight:500;flex-shrink:0}
+/* routine */
+.rt-item{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:var(--rsm);background:var(--surface2);border:1.5px solid var(--border);cursor:pointer;margin-bottom:7px;transition:all .15s}
+.rt-item.done{opacity:.5}
+.rt-item.done .rt-name{text-decoration:line-through;color:var(--text3)}
+.rt-chk{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:var(--surface);transition:all .18s}
+.rt-item.done .rt-chk{background:var(--green);border-color:var(--green);color:#fff}
+.rt-name{font-size:14px;font-weight:600;flex:1}
+.rt-tag{font-size:11px;color:var(--text3);font-weight:500;flex-shrink:0}
 
-/* 佈告欄 */
-.bulletin-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--yellow-light);border:1.5px solid #fde68a;margin-bottom:8px}
-.bulletin-dot{width:9px;height:9px;border-radius:50%;background:var(--yellow);margin-top:5px;flex-shrink:0}
-.bulletin-text{font-size:var(--font-base);font-weight:600;flex:1;color:#92400e}
-.bulletin-del{font-size:18px;color:var(--text3);cursor:pointer;background:none;border:none;padding:0 4px;transition:color 0.15s;line-height:1}
-.bulletin-del:hover{color:var(--red)}
+/* bulletin */
+.bl-item{display:flex;align-items:flex-start;gap:9px;padding:10px 13px;border-radius:var(--rsm);background:var(--yellow-light);border:1.5px solid #fde68a;margin-bottom:7px}
+.bl-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);margin-top:5px;flex-shrink:0}
+.bl-text{font-size:14px;font-weight:600;flex:1;color:#92400e}
+.bl-del{background:none;border:none;color:var(--text3);cursor:pointer;font-size:17px;padding:0 3px;line-height:1;transition:color .15s}
+.bl-del:hover{color:var(--red)}
 
-/* 今日待辦 */
-.today-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--surface);border:1.5px solid var(--border);margin-bottom:8px;cursor:pointer;transition:all 0.18s}
-.today-item:hover{border-color:var(--primary);background:var(--primary-light)}
-.today-type-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.today-title{font-size:var(--font-base);font-weight:700;flex:1}
-.today-meta{font-size:var(--font-xs);color:var(--text3);font-weight:600;flex-shrink:0}
+/* today */
+.td-item{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:var(--rsm);background:var(--surface);border:1.5px solid var(--border);margin-bottom:7px;cursor:pointer;transition:all .18s}
+.td-item:hover{border-color:var(--primary);background:var(--primary-light)}
+.td-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.td-title{font-size:14px;font-weight:700;flex:1}
+.td-meta{font-size:12px;color:var(--text3);font-weight:600;flex-shrink:0}
 
-/* ===== CALENDAR ===== */
-.cal-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
-.cal-nav-btn{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text2);transition:all 0.18s}
-.cal-nav-btn:hover{border-color:var(--primary);color:var(--primary)}
-.cal-month-title{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:var(--text)}
-.cal-legend{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-.cal-legend-item{display:flex;align-items:center;gap:5px;font-size:var(--font-xs);color:var(--text2);font-weight:600}
-.cal-legend-dot{width:10px;height:10px;border-radius:3px}
-
-.cal-grid{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
-.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border)}
-.cal-weekday{padding:10px 4px;text-align:center;font-size:var(--font-sm);font-weight:700;color:var(--text3);background:var(--surface2)}
+/* ────────────────────────────────
+   CALENDAR
+──────────────────────────────── */
+.cal-wrap{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow)}
+.cal-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.cal-nav{width:36px;height:36px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text2);transition:all .18s}
+.cal-nav:hover{border-color:var(--primary);color:var(--primary)}
+.cal-title{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900}
+.cal-legend{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.cl-item{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text2);font-weight:600}
+.cl-dot{width:9px;height:9px;border-radius:3px}
+.cal-wdays{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border)}
+.cal-wd{padding:9px 4px;text-align:center;font-size:12px;font-weight:700;color:var(--text3);background:var(--surface2)}
 .cal-days{display:grid;grid-template-columns:repeat(7,1fr)}
-.cal-cell{min-height:90px;padding:6px 4px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;position:relative;overflow:hidden}
+.cal-cell{min-height:88px;padding:5px 4px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;position:relative;overflow:hidden}
 .cal-cell:hover{background:var(--primary-light)}
-.cal-cell.other-month{background:var(--surface2);opacity:0.55}
-.cal-cell.today .cal-day-num{background:var(--primary);color:#fff;border-radius:7px}
-.cal-day-num{font-size:var(--font-sm);font-weight:700;color:var(--text2);margin-bottom:4px;width:26px;height:26px;display:flex;align-items:center;justify-content:center}
-.cal-event-pill{font-size:10px;font-weight:700;padding:2px 5px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4}
-.cal-event-pill.type-repair{background:#fee2e2;color:#dc2626}
-.cal-event-pill.type-project{background:#dbeafe;color:#1d4ed8}
-.cal-event-pill.type-routine{background:#d1fae5;color:#065f46}
-.cal-event-pill.type-task{background:#fef3c7;color:#92400e}
-.cal-event-pill.type-misc{background:var(--purple-light);color:#7c3aed}
+.cal-cell.other{background:var(--surface2);opacity:.55}
+.cal-cell.today .cal-dn{background:var(--primary);color:#fff;border-radius:6px}
+.cal-dn{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:3px;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+.cal-pill{font-size:10px;font-weight:700;padding:2px 5px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4;cursor:default}
+.cp-r{background:#fee2e2;color:#dc2626}
+.cp-p{background:#dbeafe;color:#1d4ed8}
+.cp-pn{background:#ede9fe;color:#7c3aed}
+.cal-more{font-size:10px;color:var(--text3);font-weight:700;cursor:pointer;padding:1px 4px}
+.cal-more:hover{color:var(--primary)}
 
-/* Day Panel */
+/* Day panel */
 .day-panel{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:18px;margin-top:16px;box-shadow:var(--shadow)}
-.day-panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.day-panel-title{font-family:'Nunito',sans-serif;font-size:17px;font-weight:900}
-.timeline-container{position:relative}
-.timeline-row{display:flex;min-height:44px;border-bottom:1px dashed var(--border)}
-.timeline-time-col{width:54px;flex-shrink:0;padding:6px 0;font-size:11px;font-weight:700;color:var(--text3);text-align:right;padding-right:10px;border-right:2px solid var(--border)}
-.timeline-events-col{flex:1;display:flex;gap:4px;padding:4px 8px;flex-wrap:wrap;align-items:flex-start}
-.timeline-block{padding:3px 10px;border-radius:6px;font-size:var(--font-xs);font-weight:700;cursor:pointer;transition:opacity 0.15s;line-height:1.4}
-.timeline-block:hover{opacity:0.8}
-.timeline-empty-slot{font-size:11px;color:var(--border);padding:6px 8px;font-style:italic}
-.timeline-add-btn{font-size:11px;color:var(--text3);padding:3px 8px;border-radius:5px;cursor:pointer;border:1px dashed var(--border);transition:all 0.15s}
-.timeline-add-btn:hover{border-color:var(--primary);color:var(--primary)}
+.dp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.dp-title{font-family:'Nunito',sans-serif;font-size:17px;font-weight:900}
+/* timeline */
+.tl-row{display:flex;min-height:42px;border-bottom:1px dashed var(--border)}
+.tl-time{width:52px;flex-shrink:0;font-size:11px;font-weight:700;color:var(--text3);text-align:right;padding-right:10px;border-right:2px solid var(--border);padding-top:5px}
+.tl-slots{flex:1;display:flex;gap:5px;padding:4px 8px;flex-wrap:wrap;align-items:flex-start;min-height:42px}
+.tl-block{padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .15s;line-height:1.5}
+.tl-block:hover{opacity:.75;transform:scale(1.02)}
+.tl-empty{font-size:11px;color:var(--border);padding:6px 0;font-style:italic}
 
-/* ===== TICKET / NODE TIMELINE ===== */
-.ticket-card{background:var(--surface);border-radius:var(--radius-sm);border:1.5px solid var(--border);margin-bottom:12px;overflow:hidden;transition:border-color 0.18s}
-.ticket-card:hover{border-color:var(--primary)}
-.ticket-header{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;cursor:pointer}
-.ticket-header-left{flex:1;min-width:0}
-.ticket-title{font-size:var(--font-base);font-weight:700;color:var(--text);margin-bottom:6px}
-.ticket-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.ticket-dates{font-size:var(--font-xs);color:var(--text3);margin-top:4px;font-weight:600}
-.ticket-actions{display:flex;gap:6px;flex-shrink:0;align-items:flex-start}
-.ticket-body{padding:0 16px;max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s}
-.ticket-body.open{max-height:800px;padding:0 16px 14px}
+/* popup */
+.cal-popup{position:fixed;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:16px;box-shadow:var(--shadow-lg);z-index:500;min-width:240px;max-width:320px;animation:mIn .15s ease}
+.cp-title{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;margin-bottom:10px;color:var(--text);display:flex;align-items:center;justify-content:space-between}
+.cp-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;line-height:1}
+.cp-item{padding:7px 0;border-bottom:1px dashed var(--border);font-size:13px;color:var(--text2)}
+.cp-item:last-child{border-bottom:none}
 
-/* Node Timeline */
-.node-timeline{padding:8px 0;position:relative}
-.node-timeline::before{content:'';position:absolute;left:14px;top:24px;bottom:24px;width:2px;background:var(--border)}
-.node-item{display:flex;gap:12px;margin-bottom:12px;position:relative}
-.node-dot-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:30px}
-.node-dot{width:14px;height:14px;border-radius:50%;border:3px solid var(--border);background:var(--surface);flex-shrink:0;transition:all 0.2s;margin-top:3px}
-.node-dot.done{background:var(--green);border-color:var(--green)}
-.node-dot.current{background:var(--primary);border-color:var(--primary);box-shadow:0 0 0 4px rgba(91,110,245,0.2)}
-.node-content{flex:1;min-width:0}
-.node-title{font-size:var(--font-sm);font-weight:700;color:var(--text)}
-.node-date{font-size:var(--font-xs);color:var(--text3);font-weight:600;margin-top:2px}
-.node-owner{font-size:var(--font-xs);color:var(--primary);font-weight:700}
-.node-note{font-size:var(--font-xs);color:var(--text2);margin-top:4px;line-height:1.5;background:var(--surface2);padding:6px 10px;border-radius:6px}
-.node-del{flex-shrink:0;color:var(--text3);cursor:pointer;font-size:16px;background:none;border:none;padding:2px 6px;transition:color 0.15s}
-.node-del:hover{color:var(--red)}
-.node-add{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--radius-sm);border:1.5px dashed var(--border);cursor:pointer;transition:all 0.18s;font-size:var(--font-sm);color:var(--text3);font-weight:600;margin-top:4px}
-.node-add:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+/* ────────────────────────────────
+   TICKET / PROJECT CARD
+──────────────────────────────── */
+.tk-card{background:var(--surface);border-radius:var(--rsm);border:1.5px solid var(--border);margin-bottom:12px;overflow:hidden;transition:border-color .18s}
+.tk-card:hover{border-color:var(--primary)}
+.tk-head{display:flex;align-items:flex-start;gap:10px;padding:13px 15px;cursor:pointer}
+.tk-hl{flex:1;min-width:0}
+.tk-title{font-size:15px;font-weight:700;margin-bottom:5px}
+.tk-meta{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.tk-dates{font-size:12px;color:var(--text3);margin-top:4px;font-weight:600}
+.tk-acts{display:flex;gap:5px;flex-shrink:0;align-items:flex-start}
+.tk-body{padding:0 15px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .3s}
+.tk-body.open{max-height:1200px;padding:4px 15px 14px}
+.tk-chevron{color:var(--text3);font-size:16px;transition:transform .25s;display:inline-block}
+.tk-body.open + .tk-chevron,.tk-card:has(.tk-body.open) .tk-chevron{transform:rotate(180deg)}
 
-/* ===== KNOWLEDGE BASE ===== */
+/* node timeline */
+.nt-wrap{position:relative;padding:6px 0 4px}
+.nt-wrap::before{content:'';position:absolute;left:12px;top:20px;bottom:20px;width:2px;background:var(--border)}
+.nt-item{display:flex;gap:10px;margin-bottom:10px;position:relative}
+.nt-dot{width:12px;height:12px;border-radius:50%;border:3px solid var(--border);background:var(--surface);flex-shrink:0;margin-top:4px;transition:all .2s}
+.nt-dot.done{background:var(--green);border-color:var(--green)}
+.nt-dot.cur{background:var(--primary);border-color:var(--primary);box-shadow:0 0 0 3px rgba(91,110,245,.2)}
+.nt-content{flex:1;min-width:0}
+.nt-title{font-size:13px;font-weight:700}
+.nt-meta{font-size:12px;color:var(--text3);margin-top:2px}
+.nt-note{font-size:12px;color:var(--text2);margin-top:4px;background:var(--surface2);padding:6px 9px;border-radius:6px;line-height:1.5}
+.nt-del{flex-shrink:0;background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px;padding:2px 5px;transition:color .15s}
+.nt-del:hover{color:var(--red)}
+.nt-add{display:flex;align-items:center;gap:7px;padding:7px 11px;border-radius:var(--rsm);border:1.5px dashed var(--border);cursor:pointer;font-size:13px;color:var(--text3);font-weight:600;margin-top:4px;transition:all .18s}
+.nt-add:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+
+/* inline edit fields */
+.ie-field{margin-bottom:10px}
+.ie-label{font-size:12px;font-weight:700;color:var(--text3);margin-bottom:4px;display:block}
+.ie-val{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--rsm);font-size:13px;font-family:'Noto Sans TC',sans-serif;color:var(--text);background:var(--surface2);outline:none;transition:border-color .18s}
+.ie-val:focus{border-color:var(--primary);background:var(--surface)}
+textarea.ie-val{resize:vertical;min-height:60px}
+.ie-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.ie-row{grid-template-columns:1fr}}
+.ie-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--border);margin-top:4px}
+.ie-msg{font-size:13px;margin-right:auto;font-weight:600}
+.star-btn{background:none;border:none;cursor:pointer;font-size:18px;opacity:.35;transition:all .18s;padding:0 4px;line-height:1;flex-shrink:0}
+.star-btn.on{opacity:1;filter:drop-shadow(0 0 4px #fbbf24)}
+.dur-box{background:var(--surface2);border-radius:var(--rsm);padding:8px 12px;font-size:13px;width:100%}
+
+/* ────────────────────────────────
+   WORKLOG
+──────────────────────────────── */
+.wl-fbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.wl-mode-btn{padding:7px 15px;border-radius:var(--rsm);border:1.5px solid var(--border);cursor:pointer;font-size:13px;font-weight:700;color:var(--text2);background:var(--surface);transition:all .18s;white-space:nowrap;text-decoration:none}
+.wl-mode-btn:hover,.wl-mode-btn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.wl-group{margin-bottom:6px}
+.wl-dh{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--surface2);border-left:4px solid var(--primary);font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--text);position:sticky;top:var(--nav-h);z-index:10}
+.wl-dh-cnt{font-size:12px;color:var(--text3);font-weight:600}
+.wl-item{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.wl-item:hover,.wl-item.open{background:rgba(91,110,245,.05)}
+.wl-desc{flex:1;font-size:14px;line-height:1.4;word-break:break-all}
+.wl-tags{display:flex;align-items:center;gap:7px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.wl-body{display:none;background:#f8faff;border-bottom:2px solid var(--primary);padding:16px}
+.wl-open .wl-body{display:block}
+
+/* ────────────────────────────────
+   KB / INVENTORY
+──────────────────────────────── */
 .kb-layout{display:grid;grid-template-columns:200px 1fr;gap:16px}
+@media(max-width:700px){.kb-layout{grid-template-columns:1fr}}
 .kb-cats{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:10px;box-shadow:var(--shadow);align-self:flex-start}
-.kb-cat-item{padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:var(--font-sm);font-weight:700;color:var(--text2);transition:all 0.18s;display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
-.kb-cat-item:hover{background:var(--primary-light);color:var(--primary)}
-.kb-cat-item.active{background:var(--primary);color:#fff}
-.kb-cat-count{font-size:11px;opacity:0.7;font-weight:800}
-.kb-entry{background:var(--surface);border-radius:var(--radius-sm);border:1.5px solid var(--border);padding:16px;margin-bottom:10px;transition:all 0.18s}
-.kb-entry:hover{border-color:var(--primary);box-shadow:var(--shadow)}
-.kb-skill-1{background:#d1fae5;color:#065f46}
-.kb-skill-2{background:#fef3c7;color:#92400e}
-.kb-skill-3{background:#fee2e2;color:#dc2626}
-.kb-skill-4{background:#f1f5f9;color:#64748b}
+.kb-cat{padding:9px 12px;border-radius:var(--rsm);cursor:pointer;font-size:13px;font-weight:700;color:var(--text2);transition:all .18s;display:flex;justify-content:space-between;margin-bottom:2px}
+.kb-cat:hover{background:var(--primary-light);color:var(--primary)}
+.kb-cat.active{background:var(--primary);color:#fff}
+.kb-entry{background:var(--surface);border-radius:var(--rsm);border:1.5px solid var(--border);padding:15px;margin-bottom:9px;transition:border-color .18s}
+.kb-entry:hover{border-color:var(--primary)}
+.ks1{background:#d1fae5;color:#065f46}.ks2{background:#fef3c7;color:#92400e}
+.ks3{background:#fee2e2;color:#dc2626}.ks4{background:#f1f5f9;color:#64748b}
 
-/* ===== INVENTORY ===== */
-.inv-tabs{display:flex;gap:6px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px}
-.inv-tab{padding:9px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--border);cursor:pointer;font-size:var(--font-sm);font-weight:700;color:var(--text2);background:var(--surface);transition:all 0.18s;white-space:nowrap;flex-shrink:0}
-.inv-tab.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 12px rgba(91,110,245,0.25)}
+.inv-tabs{display:flex;gap:6px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px}
+.inv-tab{padding:8px 18px;border-radius:var(--rsm);border:1.5px solid var(--border);cursor:pointer;font-size:13px;font-weight:700;color:var(--text2);background:var(--surface);transition:all .18s;white-space:nowrap;flex-shrink:0}
+.inv-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
 
-/* ===== ACHIEVEMENT ===== */
-.ach-stat{background:var(--surface);border-radius:var(--radius);padding:20px;border:1px solid var(--border);box-shadow:var(--shadow);text-align:center}
-.ach-num{font-family:'Nunito',sans-serif;font-size:44px;font-weight:900;line-height:1}
-.ach-label{font-size:var(--font-sm);color:var(--text3);font-weight:600;margin-top:4px}
-.ach-bar-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.ach-bar-label{font-size:var(--font-sm);font-weight:700;color:var(--text2);width:90px;flex-shrink:0}
-.ach-bar-bg{flex:1;background:#e9ecf4;border-radius:999px;height:12px;overflow:hidden}
-.ach-bar-fill{height:100%;border-radius:999px;transition:width 1s ease}
-.ach-bar-val{font-size:var(--font-sm);font-weight:800;color:var(--text2);width:36px;text-align:right}
-
-/* WORKLOG */
-.log-day-header{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:10px}
-.log-day-header::after{content:'';flex:1;height:1px;background:var(--border)}
-.log-entry{display:flex;gap:12px;padding:11px 0;border-bottom:1px dashed var(--border);align-items:flex-start}
-.log-entry:last-child{border-bottom:none}
-.log-dot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex-shrink:0}
-.log-time{font-size:var(--font-xs);font-weight:700;color:var(--text3);width:45px;flex-shrink:0;padding-top:2px}
-.log-main{flex:1}
-.log-text{font-size:var(--font-base);color:var(--text);font-weight:600}
-.log-sub{font-size:var(--font-xs);color:var(--text3);margin-top:2px}
-
-/* TOAST */
-.toast{position:fixed;bottom:24px;right:16px;background:var(--text);color:#fff;padding:13px 20px;border-radius:var(--radius-sm);font-size:var(--font-base);font-weight:600;z-index:9999;animation:toastIn 0.25s ease;box-shadow:var(--shadow-lg)}
-@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-/* SCROLLBAR */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-
-/* RESPONSIVE */
-@media(max-width:700px){
-  .grid-2,.grid-3{grid-template-columns:1fr}
-  .form-row{grid-template-columns:1fr}
-  .kb-layout{grid-template-columns:1fr}
-  .cal-cell{min-height:60px}
-  .cal-event-pill{font-size:9px}
-  .main{padding:14px 10px 32px}
-}
-@media(min-width:900px){
-  .main{padding:24px 32px 40px}
-}
+/* ────────────────────────────────
+   ACHIEVEMENT
+──────────────────────────────── */
+.ach-n{font-family:'Nunito',sans-serif;font-size:42px;font-weight:900;line-height:1}
+.ach-l{font-size:13px;color:var(--text3);font-weight:600;margin-top:3px}
+.ab-row{display:flex;align-items:center;gap:12px;margin-bottom:13px}
+.ab-lbl{font-size:13px;font-weight:700;color:var(--text2);width:88px;flex-shrink:0}
+.ab-bg{flex:1;background:#e9ecf4;border-radius:999px;height:11px;overflow:hidden}
+.ab-fill{height:100%;border-radius:999px;transition:width 1s ease}
+.ab-val{font-size:13px;font-weight:800;color:var(--text2);width:34px;text-align:right}
 </style>
 </head>
 <body>
 
 <!-- TOP NAV -->
 <nav class="top-nav">
-  <div class="top-nav-inner">
-    <div class="nav-logo">⚡ MIS</div>
-    <div class="nav-item active" onclick="showPage('dashboard')">
-      <span class="nav-icon">🏠</span><span class="nav-label">首頁</span>
-    </div>
-    <div class="nav-item" onclick="showPage('calendar')">
-      <span class="nav-icon">📅</span><span class="nav-label">月曆</span>
-    </div>
-    <div class="nav-item" onclick="showPage('repair')">
-      <span class="nav-icon">🔧</span><span class="nav-label">報修</span>
-    </div>
-    <div class="nav-item" onclick="showPage('project')">
-      <span class="nav-icon">📋</span><span class="nav-label">專案</span>
-    </div>
-    <div class="nav-item" onclick="showPage('misc')">
-      <span class="nav-icon">📌</span><span class="nav-label">雜事</span>
-    </div>
-    <div class="nav-item" onclick="showPage('worklog')">
-      <span class="nav-icon">📖</span><span class="nav-label">日誌</span>
-    </div>
-    <div class="nav-item" onclick="showPage('knowledge')">
-      <span class="nav-icon">📚</span><span class="nav-label">知識庫</span>
-    </div>
-    <div class="nav-item" onclick="showPage('inventory')">
-      <span class="nav-icon">📦</span><span class="nav-label">物品</span>
-    </div>
-    <div class="nav-item" onclick="showPage('achievement')">
-      <span class="nav-icon">🏆</span><span class="nav-label">成就</span>
-    </div>
+  <div class="nav-inner">
+    <div class="nav-logo">⚡ MIS<small id="nav-greet"></small></div>
+    <div class="nav-btn active" onclick="showPage('dashboard')"><span class="ni">🏠</span><span class="nl">首頁</span></div>
+    <div class="nav-btn" onclick="showPage('calendar')"><span class="ni">📅</span><span class="nl">月曆</span></div>
+    <div class="nav-btn" onclick="showPage('repair')"><span class="ni">🔧</span><span class="nl">報修</span></div>
+    <div class="nav-btn" onclick="showPage('project')"><span class="ni">📋</span><span class="nl">專案</span></div>
+    <div class="nav-btn" onclick="showPage('worklog')"><span class="ni">📖</span><span class="nl">日誌</span></div>
+    <div class="nav-btn" onclick="showPage('knowledge')"><span class="ni">📚</span><span class="nl">知識庫</span></div>
+    <div class="nav-btn" onclick="showPage('inventory')"><span class="ni">📦</span><span class="nl">物品</span></div>
+    <div class="nav-btn" onclick="showPage('achievement')"><span class="ni">🏆</span><span class="nl">成就</span></div>
   </div>
 </nav>
 
 <main class="main">
 
-<!-- ===== DASHBOARD ===== -->
+<!-- ══════════ DASHBOARD ══════════ -->
 <div id="page-dashboard" class="page active">
-
-  <!-- Hero Banner -->
-  <div class="hero-banner">
+  <!-- Hero -->
+  <div class="hero">
     <div class="hero-left">
-      <div class="hero-date" id="hero-date"></div>
-      <div class="hero-greeting">早安，MIS 戰士 💪</div>
-      <div class="hero-quote" id="hero-quote" onclick="openQuoteModal()" title="點擊修改金句">"每完成一件事，都是對混亂的一次勝利。"</div>
+      <div class="hero-line1">
+        <span class="hero-title" id="hero-greet">早安你好！</span>
+        <span class="hero-quote" id="hero-quote" onclick="openQuoteModal()" title="點擊修改">"每完成一件事，都是對混亂的一次勝利。"</span>
+      </div>
+      <div class="hero-line2" id="hero-date"></div>
     </div>
+    <div class="hero-photo" id="hero-photo-wrap" onclick="document.getElementById('photo-inp').click()">
+      <img id="hero-photo-img" src="" alt="">
+      <span id="hero-photo-icon">📷</span>
+    </div>
+    <input type="file" id="photo-inp" accept="image/*" style="display:none" onchange="handlePhoto(event)">
   </div>
 
-  <!-- 偶像照片大框 -->
-  <div class="idol-card" onclick="document.getElementById('photo-input').click()">
-    <img id="hero-photo" src="" style="display:none">
-    <div class="idol-placeholder" id="photo-placeholder">
-      <div class="idol-icon">📷</div>
-      <p>點擊上傳偶像照片</p>
-      <p style="font-size:11px;color:var(--text3)">為自己加油打氣！</p>
-    </div>
-    <div class="idol-overlay">📷 換張照片</div>
-  </div>
-  <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
-
-  <div class="grid-2" style="margin-bottom:16px">
+  <div class="dash-row">
     <!-- 例行任務 -->
     <div class="card">
-      <div class="card-title">✅ 例行任務
-        <span style="margin-left:auto;font-size:13px;color:var(--text3);font-weight:600" id="routine-prog-txt"></span>
-      </div>
-      <div id="routine-list"></div>
+      <div class="ct">✅ 例行任務 <span style="margin-left:auto;font-size:13px;color:var(--text3);font-weight:600" id="rt-prog"></span></div>
+      <div id="rt-list"></div>
     </div>
-
     <!-- 佈告欄 -->
     <div class="card">
-      <div class="card-title">📌 佈告欄
-        <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openBulletinModal()">+ 新增</button>
-      </div>
-      <div id="bulletin-list"><div style="color:var(--text3);font-size:var(--font-sm);text-align:center;padding:16px">還沒有提醒</div></div>
+      <div class="ct">📌 佈告欄 <button class="btn btn-p btn-sm" style="margin-left:auto" onclick="openBulletin()">+ 新增</button></div>
+      <div id="bl-list"><div style="color:var(--text3);font-size:13px;text-align:center;padding:14px">還沒有提醒</div></div>
     </div>
   </div>
 
   <!-- 今日待辦 -->
   <div class="card">
-    <div class="card-title">📋 今日待辦
-      <span style="margin-left:auto;font-size:13px;color:var(--text3);font-weight:600" id="today-count-txt"></span>
-    </div>
-    <div id="today-list"><div style="color:var(--text3);font-size:var(--font-sm);text-align:center;padding:16px">今天沒有排定的工作 🎉</div></div>
+    <div class="ct">📋 今日待辦 <span style="margin-left:auto;font-size:13px;color:var(--text3)" id="td-cnt"></span></div>
+    <div id="td-list"><div style="color:var(--text3);font-size:13px;text-align:center;padding:14px">今天沒有排定工作 🎉</div></div>
   </div>
 </div>
 
-<!-- ===== CALENDAR ===== -->
+<!-- ══════════ CALENDAR ══════════ -->
 <div id="page-calendar" class="page">
-  <div class="page-header">
-    <div class="page-title">📅 月曆 <span>排程</span></div>
-    <button class="btn btn-primary" onclick="openEventModal()">+ 新增事件</button>
+  <div class="ph">
+    <div class="pt">📅 月曆 <span>排程</span></div>
   </div>
-  <div class="cal-header">
-    <button class="cal-nav-btn" onclick="changeMonth(-1)">◀</button>
-    <div class="cal-month-title" id="cal-month-title"></div>
-    <button class="cal-nav-btn" onclick="changeMonth(1)">▶</button>
-    <button class="btn btn-ghost btn-sm" onclick="goToday()">今天</button>
+  <div class="cal-head">
+    <button class="cal-nav" onclick="changeMonth(-1)">◀</button>
+    <div class="cal-title" id="cal-title"></div>
+    <button class="cal-nav" onclick="changeMonth(1)">▶</button>
+    <button class="btn btn-g btn-sm" onclick="goToday()">今天</button>
     <div class="cal-legend">
-      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#dc2626"></div>報修</div>
-      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#1d4ed8"></div>專案</div>
-      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#065f46"></div>例行</div>
-      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#7c3aed"></div>雜事</div>
-      <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#92400e"></div>事件</div>
+      <div class="cl-item"><div class="cl-dot" style="background:#dc2626"></div>報修</div>
+      <div class="cl-item"><div class="cl-dot" style="background:#1d4ed8"></div>專案開始</div>
+      <div class="cl-item"><div class="cl-dot" style="background:#7c3aed"></div>專案節點</div>
     </div>
   </div>
-  <div class="cal-grid">
-    <div class="cal-weekdays">
-      <div class="cal-weekday" style="color:#ef4444">日</div>
-      <div class="cal-weekday">一</div><div class="cal-weekday">二</div>
-      <div class="cal-weekday">三</div><div class="cal-weekday">四</div>
-      <div class="cal-weekday">五</div>
-      <div class="cal-weekday" style="color:#3b82f6">六</div>
+  <div class="cal-wrap">
+    <div class="cal-wdays">
+      <div class="cal-wd" style="color:#ef4444">日</div>
+      <div class="cal-wd">一</div><div class="cal-wd">二</div><div class="cal-wd">三</div>
+      <div class="cal-wd">四</div><div class="cal-wd">五</div>
+      <div class="cal-wd" style="color:#3b82f6">六</div>
     </div>
     <div class="cal-days" id="cal-days"></div>
   </div>
   <div id="day-panel" style="display:none">
     <div class="day-panel">
-      <div class="day-panel-header">
-        <div class="day-panel-title" id="day-panel-title"></div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-primary btn-sm" id="day-add-btn">+ 新增</button>
-          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('day-panel').style.display='none'">✕</button>
-        </div>
+      <div class="dp-head">
+        <div class="dp-title" id="dp-title">時間軸</div>
+        <button class="btn btn-g btn-sm" onclick="document.getElementById('day-panel').style.display='none'">✕ 關閉</button>
       </div>
-      <div class="timeline-container" id="timeline-rows"></div>
+      <div id="tl-rows"></div>
     </div>
   </div>
 </div>
 
-<!-- ===== REPAIR ===== -->
+<!-- ══════════ REPAIR ══════════ -->
 <div id="page-repair" class="page">
-  <div class="page-header">
-    <div class="page-title">🔧 報修 <span>工單</span></div>
-    <button class="btn btn-primary" onclick="openRepairModal()">+ 新增工單</button>
+  <div class="ph">
+    <div class="pt">🔧 報修 <span>工單</span></div>
+    <button class="btn btn-p" onclick="openRepairModal()">+ 新增工單</button>
   </div>
-  <div class="filter-bar">
-    <input class="search-input" placeholder="🔍 搜尋..." oninput="renderRepairs()" id="r-search">
-    <select class="filter-select" onchange="renderRepairs()" id="r-f-type">
+  <div class="fbar">
+    <input class="finp" placeholder="🔍 搜尋描述..." oninput="renderRepairs()" id="r-srch">
+    <select class="fsel" onchange="renderRepairs()" id="r-ft">
       <option value="">全部類型</option>
       <option>個人電腦</option><option>印表機</option><option>監視器</option><option>ERP</option>
       <option>通知</option><option>貼標機</option><option>廠商</option><option>mail</option>
       <option>伺服器</option><option>公文或流程相關</option><option>網路相關</option>
       <option>森淨系統</option><option>電話</option><option>物品領借還</option><option>其他</option>
     </select>
-    <select class="filter-select" onchange="renderRepairs()" id="r-f-status">
+    <select class="fsel" onchange="renderRepairs()" id="r-fs">
       <option value="">全部狀態</option>
       <option>待處理</option><option>處理中</option><option>擱置</option><option>已取消</option>
     </select>
-    <select class="filter-select" onchange="renderRepairs()" id="r-f-date">
-      <option value="">全部日期</option>
-      <option value="today">今天</option>
-      <option value="week">本週</option>
-      <option value="month">本月</option>
+    <select class="fsel" onchange="renderRepairs()" id="r-fd">
+      <option value="">全部日期</option><option value="today">今天</option>
+      <option value="week">本週</option><option value="month">本月</option>
     </select>
   </div>
   <div id="repair-list"></div>
 </div>
 
-<!-- ===== PROJECT ===== -->
+<!-- ══════════ PROJECT ══════════ -->
 <div id="page-project" class="page">
-  <div class="page-header">
-    <div class="page-title">📋 廠商 <span>專案</span></div>
-    <button class="btn btn-primary" onclick="openProjectModal()">+ 新增專案</button>
+  <div class="ph">
+    <div class="pt">📋 廠商 <span>專案</span></div>
+    <button class="btn btn-p" onclick="openProjectModal()">+ 新增專案</button>
   </div>
-  <div class="filter-bar">
-    <input class="search-input" placeholder="🔍 搜尋..." oninput="renderProjects()" id="p-search">
-    <select class="filter-select" onchange="renderProjects()" id="p-f-status">
+  <div class="fbar">
+    <input class="finp" placeholder="🔍 搜尋專案..." oninput="renderProjects()" id="p-srch">
+    <select class="fsel" onchange="renderProjects()" id="p-fs">
       <option value="">全部狀態</option>
       <option>進行中</option><option>卡關</option><option>暫停</option>
     </select>
@@ -465,1229 +418,1256 @@ textarea.form-control{resize:vertical;min-height:80px}
   <div id="project-list"></div>
 </div>
 
-<!-- ===== MISC ===== -->
-<div id="page-misc" class="page">
-  <div class="page-header">
-    <div class="page-title">📌 雜事 <span>待辦</span></div>
-    <button class="btn btn-primary" onclick="openMiscModal()">+ 新增</button>
-  </div>
-  <div class="filter-bar">
-    <select class="filter-select" onchange="renderMisc()" id="m-f-type">
-      <option value="">全部類型</option><option>待辦</option><option>⚠️ 隱患</option><option>待討論</option>
-    </select>
-    <select class="filter-select" onchange="renderMisc()" id="m-f-status">
-      <option value="">全部狀態</option>
-      <option>待處理</option><option>處理中</option>
-    </select>
-  </div>
-  <div id="misc-list"></div>
-</div>
-
-<!-- ===== WORKLOG ===== -->
+<!-- ══════════ WORKLOG ══════════ -->
 <div id="page-worklog" class="page">
-  <div class="page-header">
-    <div class="page-title">📖 工作 <span>日誌</span></div>
-    <button class="btn btn-primary" onclick="openLogModal()">+ 手動新增</button>
+  <div class="ph">
+    <div class="pt">📖 工作 <span>日誌</span></div>
+    <button class="btn btn-p" onclick="openLogModal()">+ 手動新增</button>
   </div>
-  <div class="filter-bar">
-    <input type="month" class="filter-select" id="log-month" onchange="renderWorkLog()">
-    <select class="filter-select" onchange="renderWorkLog()" id="log-f-type">
+  <div class="wl-fbar">
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <span class="wl-mode-btn on" id="wl-m-this" onclick="setWlMode('this')">本月</span>
+      <span class="wl-mode-btn" id="wl-m-last" onclick="setWlMode('last')">上個月</span>
+      <span class="wl-mode-btn" id="wl-m-custom" onclick="setWlMode('custom')">指定月份</span>
+      <span class="wl-mode-btn" id="wl-m-all" onclick="setWlMode('all')">全部</span>
+    </div>
+    <input type="month" class="fsel" id="wl-custom-month" style="display:none" onchange="renderWorkLog()">
+    <select class="fsel" onchange="renderWorkLog()" id="wl-ft">
       <option value="">全部類型</option>
-      <option>報修</option><option>專案</option><option>例行</option><option>雜事</option><option>手動</option>
+      <option>報修</option><option>專案</option><option>手動</option>
+    </select>
+    <select class="fsel" onchange="renderWorkLog()" id="wl-fstar">
+      <option value="">全部</option><option value="1">⭐ 重要</option>
     </select>
   </div>
-  <div id="worklog-list"></div>
+  <div id="wl-list"></div>
 </div>
 
-<!-- ===== KNOWLEDGE ===== -->
+<!-- ══════════ KNOWLEDGE ══════════ -->
 <div id="page-knowledge" class="page">
-  <div class="page-header">
-    <div class="page-title">📚 知識 <span>庫</span></div>
-    <button class="btn btn-primary" onclick="openKbModal()">+ 新增知識</button>
-  </div>
+  <div class="ph"><div class="pt">📚 知識 <span>庫</span></div><button class="btn btn-p" onclick="openKbModal()">+ 新增知識</button></div>
   <div class="kb-layout">
-    <div class="kb-cats"><div id="kb-cat-list"></div></div>
+    <div class="kb-cats"><div id="kb-cats"></div></div>
     <div>
-      <div class="filter-bar">
-        <input class="search-input" placeholder="🔍 搜尋..." oninput="renderKb()" id="kb-search">
-        <select class="filter-select" onchange="renderKb()" id="kb-f-sub">
-          <option value="">全部小分類</option>
-          <option>操作步驟</option><option>問題排除</option><option>注意事項</option><option>其他備註</option>
-        </select>
-        <select class="filter-select" onchange="renderKb()" id="kb-f-skill">
-          <option value="">全部熟悉度</option>
-          <option>我會</option><option>部分會</option><option>不會</option><option>待確認</option>
-        </select>
+      <div class="fbar">
+        <input class="finp" placeholder="🔍 搜尋..." oninput="renderKb()" id="kb-srch">
+        <select class="fsel" onchange="renderKb()" id="kb-fsub"><option value="">全部小分類</option><option>操作步驟</option><option>問題排除</option><option>注意事項</option><option>其他備註</option></select>
+        <select class="fsel" onchange="renderKb()" id="kb-fsk"><option value="">全部熟悉度</option><option>我會</option><option>部分會</option><option>不會</option><option>待確認</option></select>
       </div>
       <div id="kb-list"></div>
     </div>
   </div>
 </div>
 
-<!-- ===== INVENTORY ===== -->
+<!-- ══════════ INVENTORY ══════════ -->
 <div id="page-inventory" class="page">
-  <div class="page-header"><div class="page-title">📦 物品 <span>管理</span></div></div>
+  <div class="ph"><div class="pt">📦 物品 <span>管理</span></div></div>
   <div class="inv-tabs">
     <div class="inv-tab active" onclick="switchInvTab('items',this)">物品清單</div>
     <div class="inv-tab" onclick="switchInvTab('consume',this)">消耗品領用</div>
     <div class="inv-tab" onclick="switchInvTab('borrow',this)">借出品借還</div>
     <div class="inv-tab" onclick="switchInvTab('history',this)">異動記錄</div>
   </div>
-  <div id="inv-tab-items">
-    <div class="filter-bar">
-      <button class="btn btn-primary" onclick="openInvItemModal()">+ 新增物品</button>
-      <select class="filter-select" onchange="renderInvItems()" id="inv-f-type"><option value="">全部類型</option><option>消耗品</option><option>借出品</option></select>
-      <select class="filter-select" onchange="renderInvItems()" id="inv-f-cat"><option value="">全部分類</option><option>線材</option><option>滑鼠</option><option>鍵盤</option><option>電腦設備</option><option>投影機</option><option>筆電</option><option>主機</option><option>螢幕</option><option>其他</option></select>
+  <div id="inv-items">
+    <div class="fbar"><button class="btn btn-p" onclick="openInvItemModal()">+ 新增物品</button>
+      <select class="fsel" onchange="renderInvItems()" id="inv-ft"><option value="">全部類型</option><option>消耗品</option><option>借出品</option></select>
+      <select class="fsel" onchange="renderInvItems()" id="inv-fc"><option value="">全部分類</option><option>線材</option><option>滑鼠</option><option>鍵盤</option><option>電腦設備</option><option>投影機</option><option>筆電</option><option>主機</option><option>螢幕</option><option>其他</option></select>
     </div>
-    <div class="table-wrap"><table><thead><tr><th>名稱</th><th>類型</th><th>分類</th><th>數量</th><th>備註</th><th>操作</th></tr></thead><tbody id="inv-items-tbody"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>名稱</th><th>類型</th><th>分類</th><th>數量</th><th>備註</th><th>操作</th></tr></thead><tbody id="inv-tbody"></tbody></table></div>
   </div>
-  <div id="inv-tab-consume" style="display:none">
-    <div class="filter-bar"><button class="btn btn-primary" onclick="openConsumeModal()">+ 新增領用</button></div>
-    <div class="table-wrap"><table><thead><tr><th>物品</th><th>數量</th><th>日期</th><th>領用人</th><th>相關工單</th><th>已掛帳</th><th>備註</th><th>操作</th></tr></thead><tbody id="consume-tbody"></tbody></table></div>
+  <div id="inv-consume" style="display:none">
+    <div class="fbar"><button class="btn btn-p" onclick="openConsumeModal()">+ 新增領用</button></div>
+    <div class="tw"><table><thead><tr><th>物品</th><th>數量</th><th>日期</th><th>領用人</th><th>相關工單</th><th>已掛帳</th><th>備註</th><th>操作</th></tr></thead><tbody id="consume-tbody"></tbody></table></div>
   </div>
-  <div id="inv-tab-borrow" style="display:none">
-    <div class="filter-bar"><button class="btn btn-primary" onclick="openBorrowModal()">+ 新增借出</button></div>
-    <div class="table-wrap"><table><thead><tr><th>物品</th><th>借用人</th><th>借出日期</th><th>歸還日期</th><th>狀態</th><th>備註</th><th>操作</th></tr></thead><tbody id="borrow-tbody"></tbody></table></div>
+  <div id="inv-borrow" style="display:none">
+    <div class="fbar"><button class="btn btn-p" onclick="openBorrowModal()">+ 新增借出</button></div>
+    <div class="tw"><table><thead><tr><th>物品</th><th>借用人</th><th>借出</th><th>歸還</th><th>狀態</th><th>備註</th><th>操作</th></tr></thead><tbody id="borrow-tbody"></tbody></table></div>
   </div>
-  <div id="inv-tab-history" style="display:none">
-    <div class="table-wrap"><table><thead><tr><th>時間</th><th>物品</th><th>異動</th><th>數量</th><th>說明</th></tr></thead><tbody id="inv-history-tbody"></tbody></table></div>
+  <div id="inv-history" style="display:none">
+    <div class="tw"><table><thead><tr><th>時間</th><th>物品</th><th>異動</th><th>數量</th><th>說明</th></tr></thead><tbody id="hist-tbody"></tbody></table></div>
   </div>
 </div>
 
-<!-- ===== ACHIEVEMENT ===== -->
+<!-- ══════════ ACHIEVEMENT ══════════ -->
 <div id="page-achievement" class="page">
-  <div class="page-header"><div class="page-title">🏆 我的 <span>成就</span></div></div>
+  <div class="ph"><div class="pt">🏆 我的 <span>成就</span></div></div>
   <div id="ach-content"></div>
 </div>
 
 </main>
 
-<!-- ========== MODALS ========== -->
+<!-- ════════════════════════════════
+     MODALS
+════════════════════════════════ -->
 
 <!-- Quote -->
-<div class="modal-overlay" id="modal-quote">
-  <div class="modal">
-    <div class="modal-title">💬 修改金句</div>
-    <div class="form-group"><label class="form-label">金句內容</label><textarea class="form-control" id="quote-input" rows="3"></textarea></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-quote')">取消</button><button class="btn btn-primary" onclick="saveQuote()">儲存</button></div>
-  </div>
-</div>
+<div class="mo" id="mo-quote"><div class="md">
+  <div class="mh">💬 修改金句</div>
+  <div class="fg"><label class="fl">金句</label><textarea class="fc" id="q-inp" rows="3"></textarea></div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-quote')">取消</button><button class="btn btn-p" onclick="saveQuote()">儲存</button></div>
+</div></div>
 
 <!-- Bulletin -->
-<div class="modal-overlay" id="modal-bulletin">
-  <div class="modal">
-    <div class="modal-title">📌 新增佈告</div>
-    <div class="form-group"><label class="form-label">內容</label><textarea class="form-control" id="bulletin-input" rows="3" placeholder="輸入提醒內容..."></textarea></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-bulletin')">取消</button><button class="btn btn-primary" onclick="addBulletin()">新增</button></div>
-  </div>
-</div>
+<div class="mo" id="mo-bulletin"><div class="md">
+  <div class="mh">📌 新增佈告</div>
+  <div class="fg"><label class="fl">內容</label><textarea class="fc" id="bl-inp" rows="3"></textarea></div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-bulletin')">取消</button><button class="btn btn-p" onclick="addBulletin()">新增</button></div>
+</div></div>
 
 <!-- Repair -->
-<div class="modal-overlay" id="modal-repair">
-  <div class="modal">
-    <div class="modal-title" id="repair-modal-title">🔧 新增報修工單</div>
-    <input type="hidden" id="repair-edit-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">問題類型 *</label>
-        <select class="form-control" id="r-type">
-          <option>個人電腦</option><option>印表機</option><option>監視器</option><option>ERP</option>
-          <option>通知</option><option>貼標機</option><option>廠商</option><option>mail</option>
-          <option>伺服器</option><option>公文或流程相關</option><option>網路相關</option>
-          <option>森淨系統</option><option>電話</option><option>物品領借還</option><option>其他</option>
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">狀態 *</label>
-        <select class="form-control" id="r-status"><option>待處理</option><option>處理中</option><option>擱置</option><option>已取消</option></select>
-      </div>
+<div class="mo" id="mo-repair"><div class="md">
+  <div class="mh" id="r-mh">🔧 新增報修工單</div>
+  <input type="hidden" id="r-eid">
+  <div class="fr">
+    <div class="fg"><label class="fl">問題類型 *</label>
+      <select class="fc" id="r-type"><option>個人電腦</option><option>印表機</option><option>監視器</option><option>ERP</option><option>通知</option><option>貼標機</option><option>廠商</option><option>mail</option><option>伺服器</option><option>公文或流程相關</option><option>網路相關</option><option>森淨系統</option><option>電話</option><option>物品領借還</option><option>其他</option></select>
     </div>
-    <div class="form-group"><label class="form-label">問題描述 *</label><textarea class="form-control" id="r-desc" rows="2"></textarea></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">開始日期</label><input type="date" class="form-control" id="r-start"></div>
-      <div class="form-group"><label class="form-label">預計完成日期</label><input type="date" class="form-control" id="r-planned"></div>
+    <div class="fg"><label class="fl">狀態 *</label>
+      <select class="fc" id="r-st"><option>待處理</option><option>處理中</option><option>擱置</option><option>已取消</option><option>已解決</option></select>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">開始時間</label><input type="time" class="form-control" id="r-time-start" step="1800"></div>
-      <div class="form-group"><label class="form-label">結束時間</label><input type="time" class="form-control" id="r-time-end" step="1800"></div>
-    </div>
-    <div class="form-group"><label class="form-label">觀察狀況</label><textarea class="form-control" id="r-observe" rows="2"></textarea></div>
-    <div class="form-group"><label class="form-label">處理方式</label><textarea class="form-control" id="r-handle" rows="2"></textarea></div>
-    <div class="form-group"><label class="form-label">需要準備物品</label><input class="form-control" id="r-items"></div>
-    <div class="form-group"><label class="form-label">結果</label><textarea class="form-control" id="r-result" rows="2"></textarea></div>
-    <div class="form-group"><label class="form-label">待改進</label><textarea class="form-control" id="r-improve" rows="2"></textarea></div>
-    <div class="form-group"><label class="form-label">花費時間（分鐘）</label><input type="number" class="form-control" id="r-spent" placeholder="ex: 30"></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-repair')">取消</button><button class="btn btn-primary" onclick="saveRepair()">儲存</button></div>
   </div>
-</div>
+  <div class="fg"><label class="fl">問題描述 *</label><textarea class="fc" id="r-desc" rows="2"></textarea></div>
+  <div class="fr">
+    <div class="fg"><label class="fl">開始日期</label><input type="date" class="fc" id="r-sd"></div>
+    <div class="fg"><label class="fl">預計完成日期</label><input type="date" class="fc" id="r-ed"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label class="fl">開始時間</label><input type="time" class="fc" id="r-st2" step="1800"></div>
+    <div class="fg"><label class="fl">結束時間</label><input type="time" class="fc" id="r-et" step="1800"></div>
+  </div>
+  <div class="fg"><label class="fl">觀察狀況</label><textarea class="fc" id="r-obs" rows="2"></textarea></div>
+  <div class="fg"><label class="fl">處理方式</label><textarea class="fc" id="r-sol" rows="2"></textarea></div>
+  <div class="fg"><label class="fl">需要準備物品</label><input class="fc" id="r-need"></div>
+  <div class="fg"><label class="fl">結果</label><textarea class="fc" id="r-res" rows="2"></textarea></div>
+  <div class="fg"><label class="fl">待改進</label><textarea class="fc" id="r-imp" rows="2"></textarea></div>
+  <div class="fg"><label class="fl">花費時間（分鐘）</label><input type="number" class="fc" id="r-spent" placeholder="ex: 30"></div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-repair')">取消</button><button class="btn btn-p" onclick="saveRepair()">儲存</button></div>
+</div></div>
 
 <!-- Repair Node -->
-<div class="modal-overlay" id="modal-repair-node">
-  <div class="modal">
-    <div class="modal-title">➕ 新增節點</div>
-    <input type="hidden" id="rn-repair-id">
-    <div class="form-group"><label class="form-label">節點名稱 *</label><input class="form-control" id="rn-title" placeholder="ex: 初步診斷、零件到位、完成修復..."></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">日期</label><input type="date" class="form-control" id="rn-date"></div>
-      <div class="form-group"><label class="form-label">負責單位</label>
-        <select class="form-control" id="rn-owner"><option>我方</option><option>廠商</option><option>需求單位</option><option>其他</option></select>
-      </div>
-    </div>
-    <div class="form-group"><label class="form-label">說明</label><textarea class="form-control" id="rn-note" rows="3" placeholder="詳細說明這個節點的狀況..."></textarea></div>
-    <div class="form-group"><label class="form-label">狀態</label>
-      <select class="form-control" id="rn-status"><option>進行中</option><option>完成</option><option>等待中</option><option>卡關</option></select>
-    </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-repair-node')">取消</button><button class="btn btn-primary" onclick="saveRepairNode()">新增</button></div>
+<div class="mo" id="mo-rnode"><div class="md">
+  <div class="mh">➕ 新增工單節點</div>
+  <input type="hidden" id="rn-rid">
+  <div class="fg"><label class="fl">節點名稱 *</label><input class="fc" id="rn-title" placeholder="ex: 初步診斷、零件到位..."></div>
+  <div class="fr">
+    <div class="fg"><label class="fl">日期</label><input type="date" class="fc" id="rn-date"></div>
+    <div class="fg"><label class="fl">時間</label><input type="time" class="fc" id="rn-time" step="1800"></div>
   </div>
-</div>
+  <div class="fg"><label class="fl">負責單位</label>
+    <select class="fc" id="rn-owner"><option>我方</option><option>廠商</option><option>需求單位</option><option>其他</option></select>
+  </div>
+  <div class="fg"><label class="fl">說明</label><textarea class="fc" id="rn-note" rows="3"></textarea></div>
+  <div class="fg"><label class="fl">狀態</label>
+    <select class="fc" id="rn-st"><option>進行中</option><option>完成</option><option>等待中</option><option>卡關</option></select>
+  </div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-rnode')">取消</button><button class="btn btn-p" onclick="saveRNode()">新增</button></div>
+</div></div>
 
 <!-- Project -->
-<div class="modal-overlay" id="modal-project">
-  <div class="modal">
-    <div class="modal-title" id="project-modal-title">📋 新增廠商專案</div>
-    <input type="hidden" id="project-edit-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">專案名稱 *</label><input class="form-control" id="p-name"></div>
-      <div class="form-group"><label class="form-label">廠商名稱</label><input class="form-control" id="p-vendor"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">需求部門</label><input class="form-control" id="p-dept"></div>
-      <div class="form-group"><label class="form-label">狀態</label>
-        <select class="form-control" id="p-status"><option>進行中</option><option>卡關</option><option>暫停</option></select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">開始日期</label><input type="date" class="form-control" id="p-start"></div>
-      <div class="form-group"><label class="form-label">預計完成日期</label><input type="date" class="form-control" id="p-planned"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">開始時間</label><input type="time" class="form-control" id="p-time-start" step="1800"></div>
-      <div class="form-group"><label class="form-label">結束時間</label><input type="time" class="form-control" id="p-time-end" step="1800"></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-project')">取消</button><button class="btn btn-primary" onclick="saveProject()">儲存</button></div>
+<div class="mo" id="mo-project"><div class="md">
+  <div class="mh" id="p-mh">📋 新增廠商專案</div>
+  <input type="hidden" id="p-eid">
+  <div class="fr">
+    <div class="fg"><label class="fl">專案名稱 *</label><input class="fc" id="p-name"></div>
+    <div class="fg"><label class="fl">廠商名稱</label><input class="fc" id="p-vendor"></div>
   </div>
-</div>
+  <div class="fr">
+    <div class="fg"><label class="fl">需求部門</label><input class="fc" id="p-dept"></div>
+    <div class="fg"><label class="fl">狀態</label>
+      <select class="fc" id="p-st"><option>進行中</option><option>卡關</option><option>暫停</option><option>已完成</option></select>
+    </div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label class="fl">開始日期</label><input type="date" class="fc" id="p-sd"></div>
+    <div class="fg"><label class="fl">預計完成日期</label><input type="date" class="fc" id="p-ed"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label class="fl">開始時間</label><input type="time" class="fc" id="p-st2" step="1800"></div>
+    <div class="fg"><label class="fl">結束時間</label><input type="time" class="fc" id="p-et" step="1800"></div>
+  </div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-project')">取消</button><button class="btn btn-p" onclick="saveProject()">儲存</button></div>
+</div></div>
 
 <!-- Project Stage -->
-<div class="modal-overlay" id="modal-stage">
-  <div class="modal">
-    <div class="modal-title">➕ 新增階段節點</div>
-    <input type="hidden" id="stage-project-id">
-    <div class="form-group"><label class="form-label">節點名稱 *</label><input class="form-control" id="s-title" placeholder="ex: 簽約、施工、驗收..."></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">日期</label><input type="date" class="form-control" id="s-date"></div>
-      <div class="form-group"><label class="form-label">負責單位</label>
-        <select class="form-control" id="s-owner"><option>我方</option><option>廠商</option><option>需求單位</option><option>其他</option></select>
-      </div>
-    </div>
-    <div class="form-group"><label class="form-label">說明</label><textarea class="form-control" id="s-note" rows="3" placeholder="詳細說明這個階段的狀況..."></textarea></div>
-    <div class="form-group"><label class="form-label">狀態</label>
-      <select class="form-control" id="s-status-val"><option>進行中</option><option>完成</option><option>等待中</option><option>卡關</option></select>
-    </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-stage')">取消</button><button class="btn btn-primary" onclick="saveStage()">新增</button></div>
+<div class="mo" id="mo-stage"><div class="md">
+  <div class="mh">➕ 新增專案節點</div>
+  <input type="hidden" id="sn-pid">
+  <div class="fg"><label class="fl">節點名稱 *</label><input class="fc" id="sn-title" placeholder="ex: 簽約、施工、驗收..."></div>
+  <div class="fr">
+    <div class="fg"><label class="fl">日期</label><input type="date" class="fc" id="sn-date"></div>
+    <div class="fg"><label class="fl">時間</label><input type="time" class="fc" id="sn-time" step="1800"></div>
   </div>
-</div>
+  <div class="fg"><label class="fl">負責單位</label>
+    <select class="fc" id="sn-owner"><option>我方</option><option>廠商</option><option>需求單位</option><option>其他</option></select>
+  </div>
+  <div class="fg"><label class="fl">說明</label><textarea class="fc" id="sn-note" rows="3"></textarea></div>
+  <div class="fg"><label class="fl">狀態</label>
+    <select class="fc" id="sn-st"><option>進行中</option><option>完成</option><option>等待中</option><option>卡關</option></select>
+  </div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-stage')">取消</button><button class="btn btn-p" onclick="saveStage()">新增</button></div>
+</div></div>
 
-<!-- Misc -->
-<div class="modal-overlay" id="modal-misc">
-  <div class="modal">
-    <div class="modal-title" id="misc-modal-title">📌 新增雜事</div>
-    <input type="hidden" id="misc-edit-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">類型</label>
-        <select class="form-control" id="m-type"><option>待辦</option><option>⚠️ 隱患</option><option>待討論</option></select>
-      </div>
-      <div class="form-group"><label class="form-label">狀態</label>
-        <select class="form-control" id="m-status"><option>待處理</option><option>處理中</option></select>
-      </div>
-    </div>
-    <div class="form-group"><label class="form-label">標題 *</label><input class="form-control" id="m-title"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">開始日期</label><input type="date" class="form-control" id="m-start"></div>
-      <div class="form-group"><label class="form-label">預計完成日期</label><input type="date" class="form-control" id="m-planned"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">開始時間</label><input type="time" class="form-control" id="m-time-start" step="1800"></div>
-      <div class="form-group"><label class="form-label">結束時間</label><input type="time" class="form-control" id="m-time-end" step="1800"></div>
-    </div>
-    <div class="form-group"><label class="form-label">備註</label><textarea class="form-control" id="m-note" rows="2"></textarea></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-misc')">取消</button><button class="btn btn-primary" onclick="saveMisc()">儲存</button></div>
+<!-- WorkLog -->
+<div class="mo" id="mo-log"><div class="md">
+  <div class="mh" id="log-mh">📖 新增日誌</div>
+  <input type="hidden" id="log-eid">
+  <div class="fr">
+    <div class="fg"><label class="fl">日期</label><input type="date" class="fc" id="log-date"></div>
+    <div class="fg"><label class="fl">時間</label><input type="time" class="fc" id="log-time"></div>
   </div>
-</div>
-
-<!-- Worklog -->
-<div class="modal-overlay" id="modal-log">
-  <div class="modal">
-    <div class="modal-title" id="log-modal-title">📖 新增日誌</div>
-    <input type="hidden" id="log-edit-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">日期</label><input type="date" class="form-control" id="log-date"></div>
-      <div class="form-group"><label class="form-label">時間</label><input type="time" class="form-control" id="log-time"></div>
-    </div>
-    <div class="form-group"><label class="form-label">類型</label>
-      <select class="form-control" id="log-type"><option>手動</option><option>報修</option><option>專案</option><option>例行</option><option>雜事</option></select>
-    </div>
-    <div class="form-group"><label class="form-label">內容 *</label><textarea class="form-control" id="log-content" rows="4"></textarea></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-log')">取消</button><button class="btn btn-primary" onclick="saveLog()">儲存</button></div>
+  <div class="fg"><label class="fl">類型</label>
+    <select class="fc" id="log-type"><option>手動</option><option>報修</option><option>專案</option></select>
   </div>
-</div>
+  <div class="fg"><label class="fl">內容 *</label><textarea class="fc" id="log-content" rows="4"></textarea></div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-log')">取消</button><button class="btn btn-p" onclick="saveLog()">儲存</button></div>
+</div></div>
 
 <!-- KB -->
-<div class="modal-overlay" id="modal-kb">
-  <div class="modal">
-    <div class="modal-title" id="kb-modal-title">📚 新增知識</div>
-    <input type="hidden" id="kb-edit-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">大分類 *</label>
-        <select class="form-control" id="kb-cat">
-          <option>個人電腦</option><option>印表機</option><option>監視器</option><option>ERP</option>
-          <option>通知</option><option>貼標機</option><option>廠商</option><option>mail</option>
-          <option>伺服器</option><option>公文或流程相關</option><option>網路相關</option>
-          <option>森淨系統</option><option>電話</option><option>物品領借還</option><option>其他</option>
-        </select>
-      </div>
-      <div class="form-group"><label class="form-label">小分類</label>
-        <select class="form-control" id="kb-sub"><option>操作步驟</option><option>問題排除</option><option>注意事項</option><option>其他備註</option></select>
-      </div>
+<div class="mo" id="mo-kb"><div class="md">
+  <div class="mh" id="kb-mh">📚 新增知識</div>
+  <input type="hidden" id="kb-eid">
+  <div class="fr">
+    <div class="fg"><label class="fl">大分類 *</label>
+      <select class="fc" id="kb-cat"><option>個人電腦</option><option>印表機</option><option>監視器</option><option>ERP</option><option>通知</option><option>貼標機</option><option>廠商</option><option>mail</option><option>伺服器</option><option>公文或流程相關</option><option>網路相關</option><option>森淨系統</option><option>電話</option><option>物品領借還</option><option>其他</option></select>
     </div>
-    <div class="form-group"><label class="form-label">問題描述 *</label><input class="form-control" id="kb-desc"></div>
-    <div class="form-group"><label class="form-label">解決方法</label><textarea class="form-control" id="kb-solution" rows="4"></textarea></div>
-    <div class="form-group"><label class="form-label">熟悉程度</label>
-      <select class="form-control" id="kb-skill"><option>我會</option><option>部分會</option><option>不會</option><option>待確認</option></select>
+    <div class="fg"><label class="fl">小分類</label>
+      <select class="fc" id="kb-sub"><option>操作步驟</option><option>問題排除</option><option>注意事項</option><option>其他備註</option></select>
     </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-kb')">取消</button><button class="btn btn-primary" onclick="saveKb()">儲存</button></div>
   </div>
-</div>
+  <div class="fg"><label class="fl">問題描述 *</label><input class="fc" id="kb-desc"></div>
+  <div class="fg"><label class="fl">解決方法</label><textarea class="fc" id="kb-sol" rows="4"></textarea></div>
+  <div class="fg"><label class="fl">熟悉程度</label>
+    <select class="fc" id="kb-sk"><option>我會</option><option>部分會</option><option>不會</option><option>待確認</option></select>
+  </div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-kb')">取消</button><button class="btn btn-p" onclick="saveKb()">儲存</button></div>
+</div></div>
 
 <!-- Inv Item -->
-<div class="modal-overlay" id="modal-inv-item">
-  <div class="modal">
-    <div class="modal-title" id="inv-item-title">📦 新增物品</div>
-    <input type="hidden" id="inv-item-edit-id">
-    <div class="form-group"><label class="form-label">名稱 *</label><input class="form-control" id="ii-name"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">類型</label>
-        <select class="form-control" id="ii-type"><option>消耗品</option><option>借出品</option></select>
-      </div>
-      <div class="form-group"><label class="form-label">分類</label>
-        <select class="form-control" id="ii-cat"><option>線材</option><option>滑鼠</option><option>鍵盤</option><option>電腦設備</option><option>投影機</option><option>筆電</option><option>主機</option><option>螢幕</option><option>其他</option></select>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">數量</label><input type="number" class="form-control" id="ii-qty" value="1" min="0"></div>
-      <div class="form-group"><label class="form-label">備註</label><input class="form-control" id="ii-note"></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-inv-item')">取消</button><button class="btn btn-primary" onclick="saveInvItem()">儲存</button></div>
+<div class="mo" id="mo-invitem"><div class="md">
+  <div class="mh" id="ii-mh">📦 新增物品</div>
+  <input type="hidden" id="ii-eid">
+  <div class="fg"><label class="fl">名稱 *</label><input class="fc" id="ii-name"></div>
+  <div class="fr">
+    <div class="fg"><label class="fl">類型</label><select class="fc" id="ii-type"><option>消耗品</option><option>借出品</option></select></div>
+    <div class="fg"><label class="fl">分類</label><select class="fc" id="ii-cat"><option>線材</option><option>滑鼠</option><option>鍵盤</option><option>電腦設備</option><option>投影機</option><option>筆電</option><option>主機</option><option>螢幕</option><option>其他</option></select></div>
   </div>
-</div>
+  <div class="fr">
+    <div class="fg"><label class="fl">數量</label><input type="number" class="fc" id="ii-qty" value="1" min="0"></div>
+    <div class="fg"><label class="fl">備註</label><input class="fc" id="ii-note"></div>
+  </div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-invitem')">取消</button><button class="btn btn-p" onclick="saveInvItem()">儲存</button></div>
+</div></div>
 
 <!-- Consume -->
-<div class="modal-overlay" id="modal-consume">
-  <div class="modal">
-    <div class="modal-title">📤 消耗品領用</div>
-    <div class="form-group"><label class="form-label">物品 *</label><select class="form-control" id="c-item"></select></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">數量</label><input type="number" class="form-control" id="c-qty" value="1" min="1"></div>
-      <div class="form-group"><label class="form-label">日期</label><input type="date" class="form-control" id="c-date"></div>
-    </div>
-    <div class="form-group"><label class="form-label">領用人</label><input class="form-control" id="c-person"></div>
-    <div class="form-group"><label class="form-label">相關工單</label><select class="form-control" id="c-ticket"><option value="">無</option></select></div>
-    <div class="form-group"><label class="form-label">備註</label><input class="form-control" id="c-note"></div>
-    <div class="form-group" style="display:flex;align-items:center;gap:10px"><input type="checkbox" id="c-charged" style="width:20px;height:20px;accent-color:var(--primary)"><label class="form-label" style="margin:0;cursor:pointer" for="c-charged">已掛帳</label></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-consume')">取消</button><button class="btn btn-primary" onclick="saveConsume()">儲存</button></div>
+<div class="mo" id="mo-consume"><div class="md">
+  <div class="mh">📤 消耗品領用</div>
+  <div class="fg"><label class="fl">物品 *</label><select class="fc" id="c-item"></select></div>
+  <div class="fr">
+    <div class="fg"><label class="fl">數量</label><input type="number" class="fc" id="c-qty" value="1" min="1"></div>
+    <div class="fg"><label class="fl">日期</label><input type="date" class="fc" id="c-date"></div>
   </div>
-</div>
+  <div class="fg"><label class="fl">領用人</label><input class="fc" id="c-person"></div>
+  <div class="fg"><label class="fl">相關工單</label><select class="fc" id="c-ticket"><option value="">無</option></select></div>
+  <div class="fg"><label class="fl">備註</label><input class="fc" id="c-note"></div>
+  <div class="fg" style="display:flex;align-items:center;gap:10px"><input type="checkbox" id="c-charged" style="width:18px;height:18px;accent-color:var(--primary)"><label class="fl" style="margin:0;cursor:pointer" for="c-charged">已掛帳</label></div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-consume')">取消</button><button class="btn btn-p" onclick="saveConsume()">儲存</button></div>
+</div></div>
 
 <!-- Borrow -->
-<div class="modal-overlay" id="modal-borrow">
-  <div class="modal">
-    <div class="modal-title">📥 借出品借出</div>
-    <div class="form-group"><label class="form-label">物品 *</label><select class="form-control" id="b-item"></select></div>
-    <div class="form-group"><label class="form-label">借用人</label><input class="form-control" id="b-person"></div>
-    <div class="form-group"><label class="form-label">借出日期</label><input type="date" class="form-control" id="b-date"></div>
-    <div class="form-group"><label class="form-label">備註</label><input class="form-control" id="b-note"></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-borrow')">取消</button><button class="btn btn-primary" onclick="saveBorrow()">儲存</button></div>
-  </div>
-</div>
+<div class="mo" id="mo-borrow"><div class="md">
+  <div class="mh">📥 借出品借出</div>
+  <div class="fg"><label class="fl">物品 *</label><select class="fc" id="b-item"></select></div>
+  <div class="fg"><label class="fl">借用人</label><input class="fc" id="b-person"></div>
+  <div class="fg"><label class="fl">借出日期</label><input type="date" class="fc" id="b-date"></div>
+  <div class="fg"><label class="fl">備註</label><input class="fc" id="b-note"></div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-borrow')">取消</button><button class="btn btn-p" onclick="saveBorrow()">儲存</button></div>
+</div></div>
 
-<!-- Cal Event -->
-<div class="modal-overlay" id="modal-event">
-  <div class="modal">
-    <div class="modal-title" id="event-modal-title">📅 新增事件</div>
-    <input type="hidden" id="event-edit-id">
-    <div class="form-group"><label class="form-label">標題 *</label><input class="form-control" id="ev-title"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">類型</label>
-        <select class="form-control" id="ev-type"><option value="task">事件</option><option value="repair">報修</option><option value="project">專案</option><option value="routine">例行</option><option value="misc">雜事</option></select>
-      </div>
-      <div class="form-group"><label class="form-label">日期 *</label><input type="date" class="form-control" id="ev-date"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">開始時間</label><input type="time" class="form-control" id="ev-start" value="09:00" step="1800"></div>
-      <div class="form-group"><label class="form-label">結束時間</label><input type="time" class="form-control" id="ev-end" value="09:30" step="1800"></div>
-    </div>
-    <div class="form-group"><label class="form-label">備註</label><textarea class="form-control" id="ev-note" rows="2"></textarea></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-event')">取消</button><button class="btn btn-primary" onclick="saveEvent()">儲存</button></div>
-  </div>
-</div>
+<!-- Cal popup overlay -->
+<div id="cal-popup" class="cal-popup" style="display:none"></div>
 
 <script>
-// ===== SUPABASE =====
-const SB_URL='https://cvvydopkaqhleilzknmp.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2dnlkb3BrYXFobGVpbHprbm1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDIxOTgsImV4cCI6MjA5MDg3ODE5OH0.n_lcdTailiUtIbIDxw-8enQWIq7o5444ej6g44FT4tU';
-
-async function sb(table,method='GET',body=null,qs=''){
-  const r=await fetch(`${SB_URL}/rest/v1/${table}${qs}`,{
-    method,headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
-    body:body?JSON.stringify(body):undefined
-  });
-  const t=await r.text();
-  try{return t?JSON.parse(t):[];}catch{return[];}
+// ══════════════════════════
+// SUPABASE
+// ══════════════════════════
+const SB='https://cvvydopkaqhleilzknmp.supabase.co';
+const SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2dnlkb3BrYXFobGVpbHprbm1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMDIxOTgsImV4cCI6MjA5MDg3ODE5OH0.n_lcdTailiUtIbIDxw-8enQWIq7o5444ej6g44FT4tU';
+async function sb(t,m='GET',b=null,q=''){
+  const r=await fetch(`${SB}/rest/v1/${t}${q}`,{method:m,headers:{'apikey':SK,'Authorization':'Bearer '+SK,'Content-Type':'application/json','Prefer':'return=representation'},body:b?JSON.stringify(b):undefined});
+  const tx=await r.text();try{return tx?JSON.parse(tx):[];}catch{return[];}
 }
 
-// ===== STATE =====
-let repairs=[],projects=[],misc=[],kbItems=[],invItems=[],consumes=[],borrows=[],calEvents=[],logs=[];
-let bulletins=[],currentKbCat='全部',invHistory=[];
-let calYear,calMonth,currentDayStr='';
+// ══════════════════════════
+// STATE
+// ══════════════════════════
+let repairs=[],projects=[],kbItems=[],invItems=[],consumes=[],borrows=[],logs=[];
+let bulletins=[],invHist=[],starred={};
+let calYear,calMonth,curDayStr='',kbCat='全部',wlMode='this';
 
-// ===== INIT =====
+// ══════════════════════════
+// INIT
+// ══════════════════════════
 async function init(){
   const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();
-  updateHeroDate();loadPhoto();loadQuote();loadBulletins();initRoutines();
-  const now=n.toISOString().split('T')[0];
-  document.getElementById('log-date')&&(document.getElementById('log-date').value=now);
-  await loadAll();
-  renderAll();
+  initGreet();initHero();initRoutines();loadBulletins();
+  starred=JSON.parse(localStorage.getItem('mis_starred')||'{}');
+  await loadAll();renderAll();
 }
-
 async function loadAll(){
   try{
-    [repairs,projects,misc,kbItems,invItems,consumes,borrows,calEvents,logs]=await Promise.all([
+    [repairs,projects,kbItems,invItems,consumes,borrows,logs]=await Promise.all([
       sb('repairs','GET',null,'?order=created_at.desc'),
       sb('projects','GET',null,'?order=created_at.desc'),
-      sb('misc_tasks','GET',null,'?order=created_at.desc'),
       sb('kb_items','GET',null,'?order=created_at.desc'),
       sb('inv_items','GET',null,'?order=name'),
       sb('consumes','GET',null,'?order=date.desc'),
       sb('borrows','GET',null,'?order=borrow_date.desc'),
-      sb('cal_events','GET',null,'?order=date,start_time'),
       sb('work_logs','GET',null,'?order=log_date.desc,log_time.desc'),
     ]);
-    // Migrate: ensure nodes array exists
     repairs=repairs.map(r=>({...r,nodes:r.nodes||[]}));
     projects=projects.map(p=>({...p,stages:p.stages||[]}));
-  }catch(e){console.log(e);showSetupNote();}
+  }catch(e){console.warn(e);showSetupNote();}
 }
-
 function showSetupNote(){
   const b=document.createElement('div');
-  b.style.cssText='position:fixed;top:var(--nav-h);left:0;right:0;background:#fbbf24;color:#92400e;padding:10px 16px;font-size:14px;font-weight:700;z-index:500;text-align:center';
-  b.innerHTML='⚠️ 請先在 Supabase 執行 SQL 建立資料表，目前暫存模式（重整後資料消失） <button onclick="this.parentElement.remove()" style="margin-left:12px;background:rgba(0,0,0,0.15);border:none;padding:3px 10px;border-radius:6px;cursor:pointer;font-weight:700;color:#92400e">知道了</button>';
+  b.style.cssText='position:fixed;top:var(--nav-h);left:0;right:0;background:#fbbf24;color:#92400e;padding:9px 14px;font-size:13px;font-weight:700;z-index:500;text-align:center';
+  b.innerHTML='⚠️ 請先在 Supabase SQL Editor 執行建表 SQL，目前為暫存模式 <button onclick="this.parentElement.remove()" style="margin-left:10px;background:rgba(0,0,0,.15);border:none;padding:3px 9px;border-radius:6px;cursor:pointer;color:#92400e;font-weight:700">OK</button>';
   document.body.prepend(b);
 }
-
 function renderAll(){
-  renderRepairs();renderProjects();renderMisc();renderKb();renderKbCats();
-  renderInvItems();renderConsumes();renderBorrows();renderInvHistory();
+  renderRepairs();renderProjects();renderKb();renderKbCats();
+  renderInvItems();renderConsumes();renderBorrows();renderInvHist();
   renderCalendar();renderWorkLog();renderAchievement();renderToday();
 }
 
-// ===== NAV =====
-function showPage(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>{
-    if(n.getAttribute('onclick')===`showPage('${page}')`)n.classList.add('active');
-  });
-  if(page==='achievement')renderAchievement();
-  if(page==='calendar')renderCalendar();
+// ══════════════════════════
+// NAV
+// ══════════════════════════
+function showPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(x=>{if(x.getAttribute('onclick')===`showPage('${p}')`)x.classList.add('active');});
+  if(p==='achievement')renderAchievement();
+  if(p==='calendar')renderCalendar();
 }
 
-// ===== DASHBOARD =====
-function updateHeroDate(){
+// ══════════════════════════
+// HERO / GREET
+// ══════════════════════════
+function initGreet(){
+  const h=new Date().getHours();
+  const g=h<12?'早安你好！':h<18?'午安你好！':'晚安你好！';
+  document.getElementById('hero-greet').textContent=g;
+  document.getElementById('nav-greet').textContent=g.replace('你好！','');
   const n=new Date();
   const days=['日','一','二','三','四','五','六'];
   document.getElementById('hero-date').textContent=`${n.getFullYear()}年${n.getMonth()+1}月${n.getDate()}日 星期${days[n.getDay()]}`;
+  loadQuote();
 }
-
-function loadPhoto(){
+function initHero(){
   const p=localStorage.getItem('mis_photo');
-  if(p){document.getElementById('hero-photo').src=p;document.getElementById('hero-photo').style.display='block';document.getElementById('photo-placeholder').style.display='none';}
+  if(p){document.getElementById('hero-photo-img').src=p;document.getElementById('hero-photo-img').style.display='block';document.getElementById('hero-photo-icon').style.display='none';}
 }
-function handlePhotoUpload(e){
+function handlePhoto(e){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=ev=>{localStorage.setItem('mis_photo',ev.target.result);document.getElementById('hero-photo').src=ev.target.result;document.getElementById('hero-photo').style.display='block';document.getElementById('photo-placeholder').style.display='none';toast('照片已更新 ✨');};
+  r.onload=ev=>{localStorage.setItem('mis_photo',ev.target.result);document.getElementById('hero-photo-img').src=ev.target.result;document.getElementById('hero-photo-img').style.display='block';document.getElementById('hero-photo-icon').style.display='none';toast('照片已更新 ✨');};
   r.readAsDataURL(f);
 }
 function loadQuote(){
   const q=localStorage.getItem('mis_quote')||'"每完成一件事，都是對混亂的一次勝利。"';
   document.getElementById('hero-quote').textContent=q;
 }
-function openQuoteModal(){document.getElementById('quote-input').value=localStorage.getItem('mis_quote')||'';openModal('modal-quote');}
-function saveQuote(){
-  const q=document.getElementById('quote-input').value.trim();if(!q)return;
-  localStorage.setItem('mis_quote',q);document.getElementById('hero-quote').textContent=q;
-  closeModal('modal-quote');toast('金句已更新 💬');
-}
+function openQuoteModal(){document.getElementById('q-inp').value=localStorage.getItem('mis_quote')||'';openMo('mo-quote');}
+function saveQuote(){const q=document.getElementById('q-inp').value.trim();if(!q)return;localStorage.setItem('mis_quote',q);loadQuote();closeMo('mo-quote');toast('金句已更新 💬');}
 
-// ===== ROUTINE =====
+// ══════════════════════════
+// ROUTINE
+// ══════════════════════════
 const ROUTINES=[
   {id:'r1',name:'檢查監視器',tag:'每日'},
   {id:'r2',name:'檢查伺服器',tag:'每日'},
   {id:'r3',name:'檢查備份',tag:'每日'},
   {id:'r4',name:'填寫機房檢查表',tag:'每日'},
-  {id:'r5',name:'故事館發票匯入ERP',tag:'每月1~5日',cond:(d)=>d>=1&&d<=5},
-  {id:'r6',name:'成本計算',tag:'每月1~5日',cond:(d)=>d>=1&&d<=5},
+  {id:'r5',name:'故事館發票匯入ERP',tag:'每月1~5日',cond:d=>d>=1&&d<=5},
+  {id:'r6',name:'成本計算',tag:'每月1~5日',cond:d=>d>=1&&d<=5},
   {id:'r7',name:'途程確認',tag:'偶數月20~25日',cond:(d,m)=>m%2===0&&d>=20&&d<=25},
-  {id:'r8',name:'每月發票配號',tag:'每月28~31日',cond:(d)=>d>=28},
+  {id:'r8',name:'每月發票配號',tag:'每月28~31日',cond:d=>d>=28},
 ];
 function initRoutines(){
   const n=new Date(),d=n.getDate(),m=n.getMonth()+1;
-  const key='mis_routine_'+n.toISOString().split('T')[0];
+  const key='mis_rt_'+n.toISOString().split('T')[0];
   const done=JSON.parse(localStorage.getItem(key)||'[]');
   const active=ROUTINES.filter(r=>!r.cond||r.cond(d,m));
-  const list=document.getElementById('routine-list');
-  list.innerHTML='';
+  const el=document.getElementById('rt-list');el.innerHTML='';
   active.forEach(r=>{
     const isDone=done.includes(r.id);
-    const el=document.createElement('div');
-    el.className='routine-item'+(isDone?' done':'');el.id='rt-'+r.id;
-    el.onclick=()=>{
-      const idx=done.indexOf(r.id);
-      if(idx>-1)done.splice(idx,1);else done.push(r.id);
+    const div=document.createElement('div');
+    div.className='rt-item'+(isDone?' done':'');div.id='rti-'+r.id;
+    div.onclick=()=>{
+      const i=done.indexOf(r.id);if(i>-1)done.splice(i,1);else done.push(r.id);
       localStorage.setItem(key,JSON.stringify(done));
-      el.classList.toggle('done',done.includes(r.id));
-      el.querySelector('.routine-check').textContent=done.includes(r.id)?'✓':'';
+      div.classList.toggle('done',done.includes(r.id));
+      div.querySelector('.rt-chk').textContent=done.includes(r.id)?'✓':'';
+      updateRtProg(done,active);
       if(done.includes(r.id))toast('✅ 完成！繼續加油！');
-      document.getElementById('routine-prog-txt').textContent=`${done.filter(id=>active.find(x=>x.id===id)).length}/${active.length}`;
     };
-    el.innerHTML=`<div class="routine-check">${isDone?'✓':''}</div><div class="routine-name">${r.name}</div><div class="routine-tag">${r.tag}</div>`;
-    list.appendChild(el);
+    div.innerHTML=`<div class="rt-chk">${isDone?'✓':''}</div><div class="rt-name">${r.name}</div><div class="rt-tag">${r.tag}</div>`;
+    el.appendChild(div);
   });
-  document.getElementById('routine-prog-txt').textContent=`${done.filter(id=>active.find(r=>r.id===id)).length}/${active.length}`;
+  updateRtProg(done,active);
 }
+function updateRtProg(done,active){document.getElementById('rt-prog').textContent=`${done.filter(id=>active.find(r=>r.id===id)).length}/${active.length}`;}
 
-// ===== BULLETIN =====
-function loadBulletins(){bulletins=JSON.parse(localStorage.getItem('mis_bulletins')||'[]');renderBulletins();}
+// ══════════════════════════
+// BULLETIN
+// ══════════════════════════
+function loadBulletins(){bulletins=JSON.parse(localStorage.getItem('mis_bl')||'[]');renderBulletins();}
 function renderBulletins(){
-  const el=document.getElementById('bulletin-list');
-  el.innerHTML=bulletins.length?bulletins.map((b,i)=>`<div class="bulletin-item"><div class="bulletin-dot"></div><div class="bulletin-text">${b}</div><button class="bulletin-del" onclick="deleteBulletin(${i})">✕</button></div>`).join(''):`<div style="color:var(--text3);font-size:var(--font-sm);text-align:center;padding:14px">還沒有提醒</div>`;
+  const el=document.getElementById('bl-list');
+  el.innerHTML=bulletins.length?bulletins.map((b,i)=>`<div class="bl-item"><div class="bl-dot"></div><div class="bl-text">${b}</div><button class="bl-del" onclick="delBulletin(${i})">✕</button></div>`).join(''):`<div style="color:var(--text3);font-size:13px;text-align:center;padding:12px">還沒有提醒</div>`;
 }
-function openBulletinModal(){document.getElementById('bulletin-input').value='';openModal('modal-bulletin');}
-function addBulletin(){
-  const v=document.getElementById('bulletin-input').value.trim();if(!v)return;
-  bulletins.push(v);localStorage.setItem('mis_bulletins',JSON.stringify(bulletins));
-  renderBulletins();closeModal('modal-bulletin');toast('📌 已新增佈告');
-}
-function deleteBulletin(i){bulletins.splice(i,1);localStorage.setItem('mis_bulletins',JSON.stringify(bulletins));renderBulletins();}
+function openBulletin(){document.getElementById('bl-inp').value='';openMo('mo-bulletin');}
+function addBulletin(){const v=document.getElementById('bl-inp').value.trim();if(!v)return;bulletins.push(v);localStorage.setItem('mis_bl',JSON.stringify(bulletins));renderBulletins();closeMo('mo-bulletin');toast('📌 已新增佈告');}
+function delBulletin(i){bulletins.splice(i,1);localStorage.setItem('mis_bl',JSON.stringify(bulletins));renderBulletins();}
 
-// ===== TODAY =====
+// ══════════════════════════
+// TODAY
+// ══════════════════════════
 function renderToday(){
   const today=new Date().toISOString().split('T')[0];
   const items=[];
-  repairs.filter(r=>r.start_date===today&&r.status!=='已完成').forEach(r=>items.push({type:'repair',title:`🔧 ${r.description||'報修工單'}`,meta:r.type,color:'#dc2626',page:'repair',id:r.id}));
-  projects.filter(p=>p.start_date===today&&p.status!=='已完成').forEach(p=>items.push({type:'project',title:`📋 ${p.name}`,meta:p.vendor||'廠商專案',color:'var(--primary)',page:'project',id:p.id}));
-  misc.filter(m=>m.start_date===today&&m.status!=='已完成').forEach(m=>items.push({type:'misc',title:`📌 ${m.title}`,meta:m.type,color:'#7c3aed',page:'misc',id:m.id}));
-  const el=document.getElementById('today-list');
-  document.getElementById('today-count-txt').textContent=items.length?`${items.length} 件`:' ';
-  el.innerHTML=items.length?items.map(i=>`<div class="today-item" onclick="showPage('${i.page}')">
-    <div class="today-type-dot" style="background:${i.color}"></div>
-    <div class="today-title">${i.title}</div>
-    <div class="today-meta">${i.meta||''}</div>
-  </div>`).join(''):`<div style="color:var(--text3);font-size:var(--font-sm);text-align:center;padding:14px">今天沒有排定的工作 🎉</div>`;
+  repairs.filter(r=>r.start_date===today&&r.status!=='已解決'&&r.status!=='已取消').forEach(r=>items.push({type:'repair',title:'🔧 '+(r.description||'報修工單'),meta:r.type,color:'#dc2626',page:'repair'}));
+  projects.filter(p=>p.start_date===today&&p.status!=='已完成').forEach(p=>items.push({type:'project',title:'📋 '+p.name,meta:p.vendor||'廠商專案',color:'var(--primary)',page:'project'}));
+  const el=document.getElementById('td-list');
+  document.getElementById('td-cnt').textContent=items.length?`${items.length} 件`:'';
+  el.innerHTML=items.length?items.map(i=>`<div class="td-item" onclick="showPage('${i.page}')"><div class="td-dot" style="background:${i.color}"></div><div class="td-title">${i.title}</div><div class="td-meta">${i.meta||''}</div></div>`).join(''):`<div style="color:var(--text3);font-size:13px;text-align:center;padding:12px">今天沒有排定工作 🎉</div>`;
 }
 
-// ===== CALENDAR =====
+// ══════════════════════════
+// CALENDAR
+// ══════════════════════════
 function renderCalendar(){
-  document.getElementById('cal-month-title').textContent=`${calYear}年 ${calMonth+1}月`;
+  document.getElementById('cal-title').textContent=`${calYear}年 ${calMonth+1}月`;
   const grid=document.getElementById('cal-days');grid.innerHTML='';
   const first=new Date(calYear,calMonth,1),last=new Date(calYear,calMonth+1,0);
   const today=new Date();let html='';
-  for(let i=0;i<first.getDay();i++){const d=new Date(calYear,calMonth,1-first.getDay()+i);html+=`<div class="cal-cell other-month"><div class="cal-day-num">${d.getDate()}</div></div>`;}
+  // leading blanks
+  for(let i=0;i<first.getDay();i++){const d=new Date(calYear,calMonth,1-first.getDay()+i);html+=`<div class="cal-cell other"><div class="cal-dn">${d.getDate()}</div></div>`;}
   for(let d=1;d<=last.getDate();d++){
     const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth&&today.getDate()===d;
-    const evts=getCalEvents(ds);
-    const pills=evts.slice(0,3).map(e=>`<div class="cal-event-pill type-${e._t}" title="${e._title}" onclick="event.stopPropagation();navigateToItem('${e._t}','${e._id}')">${e._title}</div>`).join('');
-    const more=evts.length>3?`<div style="font-size:10px;color:var(--text3);font-weight:700">+${evts.length-3}</div>`:'';
-    html+=`<div class="cal-cell${isToday?' today':''}" onclick="openDayPanel('${ds}')""><div class="cal-day-num">${d}</div>${pills}${more}</div>`;
+    const evts=getCalEvts(ds);
+    const MAX=3;
+    const pills=evts.slice(0,MAX).map(e=>`<div class="cal-pill ${e._cls}">${e._title}</div>`).join('');
+    const more=evts.length>MAX?`<div class="cal-more" onclick="event.stopPropagation();showCalPopup('${ds}',event)">+${evts.length-MAX} 更多</div>`:'';
+    html+=`<div class="cal-cell${isToday?' today':''}" onclick="openDayPanel('${ds}')""><div class="cal-dn">${d}</div>${pills}${more}</div>`;
   }
   const rem=(7-((first.getDay()+last.getDate())%7))%7;
-  for(let i=1;i<=rem;i++)html+=`<div class="cal-cell other-month"><div class="cal-day-num">${i}</div></div>`;
+  for(let i=1;i<=rem;i++)html+=`<div class="cal-cell other"><div class="cal-dn">${i}</div></div>`;
   grid.innerHTML=html;
 }
 
-function getCalEvents(ds){
+// get ALL events for a date: repair start + project start + project nodes
+function getCalEvts(ds){
   const all=[];
-  calEvents.filter(e=>e.date===ds).forEach(e=>all.push({_t:e.type||'task',_title:e.title,_id:'ev-'+e.id,_start:e.start_time,_end:e.end_time}));
-  repairs.filter(r=>r.start_date===ds&&r.status!=='已完成').forEach(r=>all.push({_t:'repair',_title:'🔧'+(r.description||'').substring(0,10),_id:r.id,_start:r.time_start,_end:r.time_end}));
-  projects.filter(p=>p.start_date===ds&&p.status!=='已完成').forEach(p=>all.push({_t:'project',_title:'📋'+(p.name||'').substring(0,10),_id:p.id,_start:p.time_start,_end:p.time_end}));
-  misc.filter(m=>m.start_date===ds&&m.status!=='已完成').forEach(m=>all.push({_t:'misc',_title:'📌'+(m.title||'').substring(0,10),_id:m.id,_start:m.time_start,_end:m.time_end}));
+  // repairs
+  repairs.filter(r=>r.start_date===ds&&r.status!=='已解決'&&r.status!=='已取消').forEach(r=>all.push({_id:r.id,_type:'repair',_cls:'cp-r',_title:'🔧'+(r.description||'').substring(0,10),_start:r.start_time,_end:r.end_time,_name:r.description,_jump:()=>showPage('repair')}));
+  // project starts
+  projects.filter(p=>p.start_date===ds&&p.status!=='已完成').forEach(p=>all.push({_id:p.id,_type:'project',_cls:'cp-p',_title:'📋'+(p.name||'').substring(0,10),_start:p.start_time,_end:p.end_time,_name:p.name,_jump:()=>showPage('project')}));
+  // project nodes
+  projects.forEach(p=>{
+    (p.stages||[]).filter(s=>s.date===ds).forEach(s=>all.push({_id:p.id,_type:'pnode',_cls:'cp-pn',_title:'◈'+(s.title||'').substring(0,10),_start:s.time,_end:null,_name:s.title+'（'+p.name+'）',_pid:p.id,_jump:()=>showPage('project')}));
+  });
   return all;
 }
 
-function navigateToItem(type,id){
-  if(type==='repair')showPage('repair');
-  else if(type==='project')showPage('project');
-  else if(type==='misc')showPage('misc');
+function showCalPopup(ds,e){
+  const evts=getCalEvts(ds);
+  const popup=document.getElementById('cal-popup');
+  const d=new Date(ds);
+  popup.innerHTML=`<div class="cp-title">${d.getMonth()+1}月${d.getDate()}日 所有事項<button class="cp-close" onclick="document.getElementById('cal-popup').style.display='none'">✕</button></div>${evts.map(ev=>`<div class="cp-item">
+    <span class="cal-pill ${ev._cls}" style="display:inline-block;margin-bottom:3px">${ev._title}</span><br>
+    <span style="font-size:12px">${ev._name}</span>
+    ${ev._start?`<span style="color:var(--text3);font-size:11px;margin-left:6px">${ev._start}</span>`:''}
+  </div>`).join('')}`;
+  popup.style.display='block';
+  const rect=e.target.getBoundingClientRect();
+  popup.style.top=Math.min(rect.bottom+6,window.innerHeight-280)+'px';
+  popup.style.left=Math.min(rect.left,window.innerWidth-330)+'px';
+  e.stopPropagation();
 }
+document.addEventListener('click',()=>{document.getElementById('cal-popup').style.display='none';});
 
+function changeMonth(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}else if(calMonth<0){calMonth=11;calYear--;}renderCalendar();document.getElementById('day-panel').style.display='none';}
+function goToday(){const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();renderCalendar();}
+
+// ── DAY TIMELINE ──
 function openDayPanel(ds){
-  currentDayStr=ds;
+  curDayStr=ds;
   document.getElementById('day-panel').style.display='block';
   const d=new Date(ds);
-  document.getElementById('day-panel-title').textContent=`${d.getMonth()+1}月${d.getDate()}日`;
-  document.getElementById('day-add-btn').onclick=()=>{openEventModal(ds);};
+  document.getElementById('dp-title').textContent=`${d.getMonth()+1}月${d.getDate()}日 時間軸`;
   renderTimeline(ds);
   document.getElementById('day-panel').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function renderTimeline(ds){
-  const evts=getCalEvents(ds);
-  // Build slot map 08:00~18:00 by 30min
+  const evts=getCalEvts(ds);
+  // slot map 08:00~18:00 by 30min
   const slots={};
-  for(let h=8;h<18;h++)for(let m=0;m<60;m+=30)slots[`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`]=[];
-  
-  evts.forEach(e=>{
-    if(!e._start)return;
-    // Fill all slots from start to end
-    const [sh,sm]=e._start.split(':').map(Number);
-    const [eh,em]=(e._end||e._start).split(':').map(Number);
+  for(let h=8;h<18;h++)for(let m=0;m<60;m+=30){
+    slots[`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`]=[];
+  }
+  evts.forEach(ev=>{
+    if(!ev._start)return;
+    const[sh,sm]=ev._start.split(':').map(Number);
+    const endStr=ev._end||ev._start;
+    const[eh,em]=endStr.split(':').map(Number);
     let cur=sh*60+(sm||0);
-    const end=eh*60+(em||0)||cur+30;
-    while(cur<end&&cur<18*60){
+    const end=eh*60+(em||0);
+    const endSlot=end>cur?end:cur+30; // at least 1 slot
+    while(cur<endSlot&&cur<18*60){
       const key=`${String(Math.floor(cur/60)).padStart(2,'0')}:${String(cur%60).padStart(2,'0')}`;
-      if(slots[key])slots[key].push(e);
+      if(slots[key])slots[key].push(ev);
       cur+=30;
     }
   });
-
-  const typeColors={repair:'#fee2e2,#dc2626',project:'#dbeafe,#1d4ed8',routine:'#d1fae5,#065f46',task:'#fef3c7,#92400e',misc:'#f5f3ff,#7c3aed'};
+  const clrMap={repair:'#fee2e2,#dc2626',project:'#dbeafe,#1d4ed8',pnode:'#ede9fe,#7c3aed'};
   let html='';
   Object.entries(slots).forEach(([time,evs])=>{
-    const pills=evs.map(e=>{const c=(typeColors[e._t]||typeColors.task).split(',');return`<div class="timeline-block" style="background:${c[0]};color:${c[1]}" onclick="navigateToItem('${e._t}','${e._id}')">${e._title}</div>`;}).join('');
-    html+=`<div class="timeline-row">
-      <div class="timeline-time-col">${time}</div>
-      <div class="timeline-events-col">${evs.length?pills:`<div class="timeline-add-btn" onclick="openEventModal('${currentDayStr}','${time}')">+ 新增</div>`}</div>
-    </div>`;
+    const blocks=evs.map(ev=>{
+      const[bg,fg]=(clrMap[ev._type]||'#f1f5f9,#64748b').split(',');
+      const name=ev._type==='pnode'?ev._name:(ev._type==='repair'?ev._name:ev._name);
+      return`<div class="tl-block" style="background:${bg};color:${fg}" onclick="${ev._type==='pnode'?`showPage('project')`:`showPage('${ev._type}')`}" title="${name}">${ev._title}</div>`;
+    }).join('');
+    html+=`<div class="tl-row"><div class="tl-time">${time}</div><div class="tl-slots">${evs.length?blocks:`<div class="tl-empty">空閒</div>`}</div></div>`;
   });
-  document.getElementById('timeline-rows').innerHTML=html;
+  document.getElementById('tl-rows').innerHTML=html;
 }
 
-function openEventModal(date='',time=''){
-  document.getElementById('event-edit-id').value='';
-  document.getElementById('ev-title').value='';
-  document.getElementById('ev-date').value=date||new Date().toISOString().split('T')[0];
-  document.getElementById('ev-start').value=time||'09:00';
-  document.getElementById('ev-end').value=time?addHalfHour(time):'09:30';
-  document.getElementById('ev-note').value='';
-  document.getElementById('event-modal-title').textContent='📅 新增事件';
-  openModal('modal-event');
-}
-function addHalfHour(t){const[h,m]=t.split(':').map(Number);const tot=h*60+m+30;return`${String(Math.floor(tot/60)).padStart(2,'0')}:${String(tot%60).padStart(2,'0')}`;}
-
-async function saveEvent(){
-  const data={title:document.getElementById('ev-title').value.trim(),type:document.getElementById('ev-type').value,date:document.getElementById('ev-date').value,start_time:document.getElementById('ev-start').value,end_time:document.getElementById('ev-end').value,note:document.getElementById('ev-note').value,created_at:new Date().toISOString()};
-  if(!data.title||!data.date){toast('請填寫標題和日期');return;}
-  try{const r=await sb('cal_events','POST',data);if(r&&r[0])calEvents.push(r[0]);else calEvents.push({...data,id:Date.now()});}
-  catch(e){calEvents.push({...data,id:Date.now()});}
-  closeModal('modal-event');renderCalendar();if(currentDayStr===data.date)renderTimeline(data.date);toast('✅ 事件已新增');
-}
-
-function changeMonth(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++;}else if(calMonth<0){calMonth=11;calYear--;}renderCalendar();document.getElementById('day-panel').style.display='none';}
-function goToday(){const n=new Date();calYear=n.getFullYear();calMonth=n.getMonth();renderCalendar();}
-
-// ===== REPAIR =====
-const STATUS_COLORS={待處理:'badge-orange',處理中:'badge-blue',擱置:'badge-purple',已取消:'badge-gray'};
+// ══════════════════════════
+// REPAIR
+// ══════════════════════════
+const ST_COL={待處理:'bo',處理中:'bb',擱置:'bp',已取消:'bgr',已解決:'bg'};
 
 function renderRepairs(){
-  const s=document.getElementById('r-search')?.value.toLowerCase()||'';
-  const tf=document.getElementById('r-f-type')?.value||'';
-  const sf=document.getElementById('r-f-status')?.value||'';
-  const df=document.getElementById('r-f-date')?.value||'';
+  const s=document.getElementById('r-srch')?.value.toLowerCase()||'';
+  const tf=document.getElementById('r-ft')?.value||'';
+  const sf=document.getElementById('r-fs')?.value||'';
+  const df=document.getElementById('r-fd')?.value||'';
   const today=new Date().toISOString().split('T')[0];
   const weekAgo=new Date(Date.now()-7*86400000).toISOString().split('T')[0];
-  const monthStart=today.substring(0,7)+'-01';
-  
-  let filtered=repairs.filter(r=>{
+  const mStart=today.substring(0,7)+'-01';
+  let f=repairs.filter(r=>{
+    if(r.status==='已解決'||r.status==='已取消') return false; // moved to log
     if(s&&!r.description?.toLowerCase().includes(s))return false;
     if(tf&&r.type!==tf)return false;
     if(sf&&r.status!==sf)return false;
     if(df==='today'&&r.start_date!==today)return false;
     if(df==='week'&&(r.start_date<weekAgo||r.start_date>today))return false;
-    if(df==='month'&&r.start_date<monthStart)return false;
+    if(df==='month'&&r.start_date<mStart)return false;
     return true;
   });
-
   const el=document.getElementById('repair-list');
-  if(!filtered.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3);font-size:var(--font-base)">📭 沒有符合的工單</div>`;return;}
-  el.innerHTML=filtered.map(r=>renderTicketCard(r)).join('');
+  if(!f.length){el.innerHTML=`<div style="text-align:center;padding:36px;color:var(--text3)">📭 沒有符合的工單</div>`;return;}
+  el.innerHTML=f.map(r=>renderRepairCard(r)).join('');
 }
 
-function renderTicketCard(r){
+function renderRepairCard(r){
   const nodes=r.nodes||[];
-  const currentNodeIdx=nodes.findIndex(n=>n.status!=='完成');
+  const curI=nodes.findIndex(n=>n.status!=='完成');
   const nodeHtml=nodes.map((n,i)=>{
-    const isDone=n.status==='完成';
-    const isCurrent=i===currentNodeIdx;
-    return`<div class="node-item">
-      <div class="node-dot-wrap"><div class="node-dot ${isDone?'done':isCurrent?'current':''}"></div></div>
-      <div class="node-content">
-        <div class="node-title">${n.title} <span class="badge ${isDone?'badge-green':isCurrent?'badge-blue':'badge-gray'}" style="font-size:10px">${n.status||''}</span></div>
-        <div class="node-date">${n.date||''} <span class="node-owner">${n.owner?'— '+n.owner:''}</span></div>
-        ${n.note?`<div class="node-note">${n.note}</div>`:''}
+    const done=n.status==='完成',cur=i===curI;
+    return`<div class="nt-item">
+      <div class="nt-dot ${done?'done':cur?'cur':''}"></div>
+      <div class="nt-content">
+        <div class="nt-title">${n.title} <span class="badge ${done?'bg':cur?'bb':'bgr'}" style="font-size:10px">${n.status||''}</span></div>
+        <div class="nt-meta">${n.date||''}${n.time?' '+n.time:''} ${n.owner?'— '+n.owner:''}</div>
+        ${n.note?`<div class="nt-note">${n.note}</div>`:''}
       </div>
-      <button class="node-del" onclick="deleteRepairNode('${r.id}',${i})">✕</button>
+      <button class="nt-del" onclick="delRNode('${r.id}',${i})">✕</button>
     </div>`;
   }).join('');
-
-  return`<div class="ticket-card">
-    <div class="ticket-header" onclick="toggleTicket('r-${r.id}')">
-      <div class="ticket-header-left">
-        <div class="ticket-title">${r.description||'(無描述)'}</div>
-        <div class="ticket-meta">
-          <span class="badge badge-blue">${r.type||'其他'}</span>
-          <span class="badge ${STATUS_COLORS[r.status]||'badge-gray'}">${r.status}</span>
-          ${nodes.length?`<span class="badge badge-gray">${nodes.filter(n=>n.status==='完成').length}/${nodes.length} 節點</span>`:''}
+  const isStar=starred['r_'+r.id];
+  return`<div class="tk-card" id="tk-r-${r.id}">
+    <div class="tk-head" onclick="toggleTk('tb-r-${r.id}',this)">
+      <button class="star-btn ${isStar?'on':''}" onclick="event.stopPropagation();toggleStar('r',${r.id})" title="標記重要">★</button>
+      <div class="tk-hl">
+        <div class="tk-title">${r.description||'(無描述)'}</div>
+        <div class="tk-meta">
+          <span class="badge bb">${r.type||'其他'}</span>
+          <span class="badge ${ST_COL[r.status]||'bgr'}">${r.status}</span>
+          ${nodes.length?`<span class="badge bgr">${nodes.filter(n=>n.status==='完成').length}/${nodes.length}</span>`:''}
         </div>
-        <div class="ticket-dates">
-          ${r.start_date?`🚀 ${r.start_date}`:''}${r.time_start?' '+r.time_start:''}
-          ${r.planned_date?` ➜ 預計 ${r.planned_date}`:''}
-          ${r.time_spent?` ⏱ ${r.time_spent}分`:''}
-        </div>
+        <div class="tk-dates">${r.start_date?'🚀 '+r.start_date+(r.start_time?' '+r.start_time:''):''}${r.end_date?' ➜ '+r.end_date:''}</div>
       </div>
-      <div class="ticket-actions">
-        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();editRepair('${r.id}')">✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteRepair('${r.id}')">🗑️</button>
-        <span style="color:var(--text3);font-size:18px;cursor:pointer">▾</span>
+      <div class="tk-acts">
+        <button class="btn btn-g btn-xs" onclick="event.stopPropagation();editRepair('${r.id}')">✏️</button>
+        <button class="btn btn-d btn-xs" onclick="event.stopPropagation();delRepair('${r.id}')">🗑️</button>
+        <span class="tk-chevron">▾</span>
       </div>
     </div>
-    <div class="ticket-body" id="r-${r.id}">
-      ${r.handle?`<div style="font-size:var(--font-sm);color:var(--text2);margin-bottom:10px;padding:8px 12px;background:var(--surface2);border-radius:8px">📝 ${r.handle}</div>`:''}
-      <div class="node-timeline">${nodeHtml}</div>
-      <div class="node-add" onclick="openRepairNodeModal('${r.id}')">+ 新增節點</div>
+    <div class="tk-body" id="tb-r-${r.id}">
+      ${renderRepairDetail(r)}
+      <div class="nt-wrap">${nodeHtml}</div>
+      <div class="nt-add" onclick="openRNodeModal('${r.id}')">+ 新增節點</div>
     </div>
   </div>`;
 }
 
-function toggleTicket(id){const el=document.getElementById(id);el.classList.toggle('open');}
+function renderRepairDetail(r){
+  const id=r.id;
+  const dur=calcDur(r.created_at,r.resolved_at||null);
+  return`<div class="ie-row">
+    <div class="ie-field"><span class="ie-label">問題描述</span><textarea class="ie-val" id="ie-desc-${id}" rows="2">${r.description||''}</textarea></div>
+    <div class="ie-field"><span class="ie-label">觀察狀況</span><textarea class="ie-val" id="ie-obs-${id}" rows="2">${r.observe||''}</textarea></div>
+  </div>
+  <div class="ie-row">
+    <div class="ie-field"><span class="ie-label">處理方式</span><textarea class="ie-val" id="ie-sol-${id}" rows="2">${r.handle||''}</textarea></div>
+    <div class="ie-field"><span class="ie-label">需要準備物品</span><textarea class="ie-val" id="ie-need-${id}" rows="2">${r.items||''}</textarea></div>
+  </div>
+  <div class="ie-row">
+    <div class="ie-field"><span class="ie-label">結果</span><textarea class="ie-val" id="ie-res-${id}" rows="2">${r.result||''}</textarea></div>
+    <div class="ie-field"><span class="ie-label">待改進</span><textarea class="ie-val" id="ie-imp-${id}" rows="2">${r.improve||''}</textarea></div>
+  </div>
+  <div class="ie-row">
+    <div class="ie-field"><span class="ie-label">類型</span>
+      <select class="ie-val" id="ie-type-${id}">
+        ${['個人電腦','印表機','監視器','ERP','通知','貼標機','廠商','mail','伺服器','公文或流程相關','網路相關','森淨系統','電話','物品領借還','其他'].map(t=>`<option${r.type===t?' selected':''}>${t}</option>`).join('')}
+      </select>
+    </div>
+    <div class="ie-field"><span class="ie-label">狀態（改為已解決/已取消 → 移至日誌）</span>
+      <select class="ie-val" id="ie-st-${id}">
+        ${['待處理','處理中','擱置','已取消','已解決'].map(s=>`<option${r.status===s?' selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>
+  </div>
+  <div class="ie-row">
+    <div class="ie-field"><span class="ie-label">開始日期</span><input type="date" class="ie-val" id="ie-sd-${id}" value="${r.start_date||''}"></div>
+    <div class="ie-field"><span class="ie-label">預計完成</span><input type="date" class="ie-val" id="ie-ed-${id}" value="${r.end_date||''}"></div>
+  </div>
+  <div class="ie-row">
+    <div class="ie-field"><span class="ie-label">開始時間</span><input type="time" class="ie-val" id="ie-st2-${id}" value="${r.start_time||''}" step="1800"></div>
+    <div class="ie-field"><span class="ie-label">結束時間</span><input type="time" class="ie-val" id="ie-et-${id}" value="${r.end_time||''}" step="1800"></div>
+  </div>
+  <div class="ie-field"><span class="ie-label">⏱ 花費時間</span>
+    <div class="dur-box">建立 ${r.created_at?r.created_at.substring(0,10):'-'} → 完成 ${r.resolved_at?r.resolved_at.substring(0,10):'未完成'} &nbsp;<strong style="color:var(--yellow)">${dur}</strong></div>
+  </div>
+  <div class="ie-actions">
+    <span class="ie-msg" id="ie-msg-${id}"></span>
+    <button class="btn btn-d btn-sm" onclick="delRepair('${id}')">刪除</button>
+    <button class="btn btn-p btn-sm" onclick="saveRepairInline('${id}')">儲存修改</button>
+  </div>`;
+}
+
+function calcDur(from,to){
+  if(!from)return'-';
+  const t=(to?new Date(to):new Date())-new Date(from);
+  if(t<0)return'-';
+  const d=Math.floor(t/86400000),h=Math.floor((t%86400000)/3600000);
+  if(d>0)return d+'天'+(h>0?h+'小時':'');
+  if(h>0)return h+'小時';
+  return '不到1小時';
+}
+
+function toggleTk(id,headEl){
+  const el=document.getElementById(id);
+  el.classList.toggle('open');
+  const ch=headEl.querySelector('.tk-chevron');
+  if(ch)ch.style.transform=el.classList.contains('open')?'rotate(180deg)':'';
+}
 
 function openRepairModal(){
-  document.getElementById('repair-edit-id').value='';
-  ['r-desc','r-observe','r-handle','r-items','r-result','r-improve','r-start','r-planned','r-time-start','r-time-end','r-spent'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('r-status').value='待處理';
-  document.getElementById('repair-modal-title').textContent='🔧 新增報修工單';
-  openModal('modal-repair');
+  document.getElementById('r-eid').value='';
+  ['r-desc','r-obs','r-sol','r-need','r-res','r-imp','r-sd','r-ed','r-st2','r-et','r-spent'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('r-st').value='待處理';
+  document.getElementById('r-mh').textContent='🔧 新增報修工單';
+  openMo('mo-repair');
 }
 function editRepair(id){
   const r=repairs.find(x=>x.id==id);if(!r)return;
-  document.getElementById('repair-edit-id').value=id;
+  document.getElementById('r-eid').value=id;
   document.getElementById('r-type').value=r.type||'個人電腦';
-  document.getElementById('r-status').value=r.status||'待處理';
+  document.getElementById('r-st').value=r.status||'待處理';
   document.getElementById('r-desc').value=r.description||'';
-  document.getElementById('r-observe').value=r.observe||'';
-  document.getElementById('r-handle').value=r.handle||'';
-  document.getElementById('r-items').value=r.items||'';
-  document.getElementById('r-result').value=r.result||'';
-  document.getElementById('r-improve').value=r.improve||'';
-  document.getElementById('r-start').value=r.start_date||'';
-  document.getElementById('r-planned').value=r.planned_date||'';
-  document.getElementById('r-time-start').value=r.time_start||'';
-  document.getElementById('r-time-end').value=r.time_end||'';
+  document.getElementById('r-obs').value=r.observe||'';
+  document.getElementById('r-sol').value=r.handle||'';
+  document.getElementById('r-need').value=r.items||'';
+  document.getElementById('r-res').value=r.result||'';
+  document.getElementById('r-imp').value=r.improve||'';
+  document.getElementById('r-sd').value=r.start_date||'';
+  document.getElementById('r-ed').value=r.end_date||'';
+  document.getElementById('r-st2').value=r.start_time||'';
+  document.getElementById('r-et').value=r.end_time||'';
   document.getElementById('r-spent').value=r.time_spent||'';
-  document.getElementById('repair-modal-title').textContent='✏️ 編輯報修工單';
-  openModal('modal-repair');
+  document.getElementById('r-mh').textContent='✏️ 編輯報修工單';
+  openMo('mo-repair');
 }
 async function saveRepair(){
-  const id=document.getElementById('repair-edit-id').value;
-  const data={type:document.getElementById('r-type').value,status:document.getElementById('r-status').value,description:document.getElementById('r-desc').value.trim(),observe:document.getElementById('r-observe').value,handle:document.getElementById('r-handle').value,items:document.getElementById('r-items').value,result:document.getElementById('r-result').value,improve:document.getElementById('r-improve').value,start_date:document.getElementById('r-start').value||null,planned_date:document.getElementById('r-planned').value||null,time_start:document.getElementById('r-time-start').value||null,time_end:document.getElementById('r-time-end').value||null,time_spent:document.getElementById('r-spent').value||null,created_at:new Date().toISOString()};
+  const id=document.getElementById('r-eid').value;
+  const data={type:document.getElementById('r-type').value,status:document.getElementById('r-st').value,description:document.getElementById('r-desc').value.trim(),observe:document.getElementById('r-obs').value,handle:document.getElementById('r-sol').value,items:document.getElementById('r-need').value,result:document.getElementById('r-res').value,improve:document.getElementById('r-imp').value,start_date:document.getElementById('r-sd').value||null,end_date:document.getElementById('r-ed').value||null,start_time:document.getElementById('r-st2').value||null,end_time:document.getElementById('r-et').value||null,time_spent:document.getElementById('r-spent').value||null};
   if(!data.description){toast('請填寫問題描述');return;}
+  if(['已解決','已取消'].includes(data.status))data.resolved_at=new Date().toISOString();
   try{
     if(id){const ex=repairs.find(r=>r.id==id);data.nodes=ex?.nodes||[];await sb('repairs','PATCH',data,`?id=eq.${id}`);repairs=repairs.map(r=>r.id==id?{...r,...data}:r);}
-    else{const r=await sb('repairs','POST',{...data,nodes:[]});if(r&&r[0])repairs.unshift(r[0]);else repairs.unshift({...data,nodes:[],id:Date.now()});}
-  }catch(e){if(id)repairs=repairs.map(r=>r.id==id?{...r,...data}:r);else repairs.unshift({...data,nodes:[],id:Date.now()});}
-  closeModal('modal-repair');renderRepairs();renderCalendar();renderToday();addLog('報修',data.type,data.description);toast('✅ 工單已儲存');
+    else{data.created_at=new Date().toISOString();data.nodes=[];const rv=await sb('repairs','POST',data);if(rv&&rv[0])repairs.unshift(rv[0]);else repairs.unshift({...data,id:Date.now()});}
+  }catch(e){if(id)repairs=repairs.map(r=>r.id==id?{...r,...data}:r);else{data.created_at=new Date().toISOString();data.nodes=[];repairs.unshift({...data,id:Date.now()});}}
+  // auto log if resolved/cancelled
+  if(['已解決','已取消'].includes(data.status))autoLog('報修',data.type,data.description,data);
+  closeMo('mo-repair');renderRepairs();renderCalendar();renderToday();renderWorkLog();toast('✅ 工單已儲存');
 }
-async function deleteRepair(id){
-  if(!confirm('確定刪除？'))return;
+
+async function saveRepairInline(id){
+  const r=repairs.find(x=>x.id==id);if(!r)return;
+  const msg=document.getElementById('ie-msg-'+id);
+  const data={...r,
+    description:document.getElementById('ie-desc-'+id).value,
+    observe:document.getElementById('ie-obs-'+id).value,
+    handle:document.getElementById('ie-sol-'+id).value,
+    items:document.getElementById('ie-need-'+id).value,
+    result:document.getElementById('ie-res-'+id).value,
+    improve:document.getElementById('ie-imp-'+id).value,
+    type:document.getElementById('ie-type-'+id).value,
+    status:document.getElementById('ie-st-'+id).value,
+    start_date:document.getElementById('ie-sd-'+id).value||null,
+    end_date:document.getElementById('ie-ed-'+id).value||null,
+    start_time:document.getElementById('ie-st2-'+id).value||null,
+    end_time:document.getElementById('ie-et-'+id).value||null,
+  };
+  const movingToLog=['已解決','已取消'].includes(data.status);
+  if(movingToLog)data.resolved_at=data.resolved_at||new Date().toISOString();
+  try{await sb('repairs','PATCH',data,`?id=eq.${id}`);}catch(e){}
+  repairs=repairs.map(x=>x.id==id?{...x,...data}:x);
+  if(movingToLog){
+    autoLog('報修',data.type,data.description,data);
+    msg.style.color='var(--green)';msg.textContent='↩ 已移至工作日誌';
+    setTimeout(()=>{renderRepairs();renderCalendar();renderToday();renderWorkLog();},900);
+  }else{
+    msg.style.color='var(--green)';msg.textContent='✓ 已儲存';
+    setTimeout(()=>{renderRepairs();renderCalendar();renderToday();},500);
+  }
+}
+
+async function delRepair(id){
+  if(!confirm('確定刪除此工單？'))return;
   try{await sb('repairs','DELETE',null,`?id=eq.${id}`);}catch(e){}
   repairs=repairs.filter(r=>r.id!=id);renderRepairs();renderCalendar();renderToday();toast('🗑️ 已刪除');
 }
 
-function openRepairNodeModal(rid){document.getElementById('rn-repair-id').value=rid;['rn-title','rn-date','rn-note'].forEach(id=>document.getElementById(id).value='');document.getElementById('rn-owner').value='我方';document.getElementById('rn-status').value='進行中';openModal('modal-repair-node');}
-async function saveRepairNode(){
-  const rid=document.getElementById('rn-repair-id').value;
-  const node={title:document.getElementById('rn-title').value.trim(),date:document.getElementById('rn-date').value,owner:document.getElementById('rn-owner').value,note:document.getElementById('rn-note').value,status:document.getElementById('rn-status').value};
+function openRNodeModal(rid){
+  document.getElementById('rn-rid').value=rid;
+  ['rn-title','rn-date','rn-time','rn-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('rn-owner').value='我方';document.getElementById('rn-st').value='進行中';
+  openMo('mo-rnode');
+}
+async function saveRNode(){
+  const rid=document.getElementById('rn-rid').value;
+  const node={title:document.getElementById('rn-title').value.trim(),date:document.getElementById('rn-date').value,time:document.getElementById('rn-time').value||null,owner:document.getElementById('rn-owner').value,note:document.getElementById('rn-note').value,status:document.getElementById('rn-st').value};
   if(!node.title){toast('請填寫節點名稱');return;}
   const r=repairs.find(x=>x.id==rid);if(!r)return;
   r.nodes=r.nodes||[];r.nodes.push(node);
   try{await sb('repairs','PATCH',{nodes:r.nodes},`?id=eq.${rid}`);}catch(e){}
-  closeModal('modal-repair-node');renderRepairs();toast('✅ 節點已新增');
+  closeMo('mo-rnode');renderRepairs();toast('✅ 節點已新增');
 }
-async function deleteRepairNode(rid,idx){
+async function delRNode(rid,idx){
   const r=repairs.find(x=>x.id==rid);if(!r)return;
   r.nodes.splice(idx,1);
   try{await sb('repairs','PATCH',{nodes:r.nodes},`?id=eq.${rid}`);}catch(e){}
   renderRepairs();toast('🗑️ 節點已刪除');
 }
 
-// ===== PROJECT =====
+// ══════════════════════════
+// PROJECT
+// ══════════════════════════
 function renderProjects(){
-  const s=document.getElementById('p-search')?.value.toLowerCase()||'';
-  const sf=document.getElementById('p-f-status')?.value||'';
-  let filtered=projects.filter(p=>{
+  const s=document.getElementById('p-srch')?.value.toLowerCase()||'';
+  const sf=document.getElementById('p-fs')?.value||'';
+  const f=projects.filter(p=>{
+    if(p.status==='已完成')return false;
     if(s&&!p.name?.toLowerCase().includes(s))return false;
     if(sf&&p.status!==sf)return false;
     return true;
   });
   const el=document.getElementById('project-list');
-  if(!filtered.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3);font-size:var(--font-base)">📭 還沒有專案</div>`;return;}
-  const stColors={進行中:'badge-blue',卡關:'badge-red',暫停:'badge-gray'};
-  el.innerHTML=filtered.map(p=>{
+  if(!f.length){el.innerHTML=`<div style="text-align:center;padding:36px;color:var(--text3)">📭 還沒有進行中的專案</div>`;return;}
+  const stc={進行中:'bb',卡關:'br',暫停:'bgr'};
+  el.innerHTML=f.map(p=>{
     const stages=p.stages||[];
-    const curIdx=stages.findIndex(s=>s.status_val!=='完成');
+    const curI=stages.findIndex(s=>s.status_val!=='完成');
+    const isStar=starred['p_'+p.id];
     const stageHtml=stages.map((s,i)=>{
-      const isDone=s.status_val==='完成';
-      const isCur=i===curIdx;
-      return`<div class="node-item">
-        <div class="node-dot-wrap"><div class="node-dot ${isDone?'done':isCur?'current':''}"></div></div>
-        <div class="node-content">
-          <div class="node-title">${s.title} <span class="badge ${isDone?'badge-green':isCur?'badge-blue':'badge-gray'}" style="font-size:10px">${s.status_val||''}</span></div>
-          <div class="node-date">${s.date||''} <span class="node-owner">${s.owner?'— '+s.owner:''}</span></div>
-          ${s.note?`<div class="node-note">${s.note}</div>`:''}
+      const done=s.status_val==='完成',cur=i===curI;
+      return`<div class="nt-item">
+        <div class="nt-dot ${done?'done':cur?'cur':''}"></div>
+        <div class="nt-content">
+          <div class="nt-title">${s.title} <span class="badge ${done?'bg':cur?'bb':'bgr'}" style="font-size:10px">${s.status_val||''}</span></div>
+          <div class="nt-meta">${s.date||''}${s.time?' '+s.time:''} ${s.owner?'— '+s.owner:''}</div>
+          ${s.note?`<div class="nt-note">${s.note}</div>`:''}
         </div>
-        <button class="node-del" onclick="deleteStage('${p.id}',${i})">✕</button>
+        <button class="nt-del" onclick="delStage('${p.id}',${i})">✕</button>
       </div>`;
     }).join('');
-
-    return`<div class="ticket-card">
-      <div class="ticket-header" onclick="toggleTicket('p-${p.id}')">
-        <div class="ticket-header-left">
-          <div class="ticket-title">${p.name}</div>
-          <div class="ticket-meta">
-            <span class="badge ${stColors[p.status]||'badge-gray'}">${p.status}</span>
-            ${p.vendor?`<span class="badge badge-gray">廠商：${p.vendor}</span>`:''}
-            ${p.dept?`<span class="badge badge-gray">部門：${p.dept}</span>`:''}
-            ${stages.length?`<span class="badge badge-gray">${stages.filter(s=>s.status_val==='完成').length}/${stages.length} 完成</span>`:''}
+    return`<div class="tk-card" id="tk-p-${p.id}">
+      <div class="tk-head" onclick="toggleTk('tb-p-${p.id}',this)">
+        <button class="star-btn ${isStar?'on':''}" onclick="event.stopPropagation();toggleStar('p',${p.id})" title="標記重要">★</button>
+        <div class="tk-hl">
+          <div class="tk-title">${p.name}</div>
+          <div class="tk-meta">
+            <span class="badge ${stc[p.status]||'bgr'}">${p.status}</span>
+            ${p.vendor?`<span class="badge bgr">廠商：${p.vendor}</span>`:''}
+            ${p.dept?`<span class="badge bgr">部門：${p.dept}</span>`:''}
+            ${stages.length?`<span class="badge bgr">${stages.filter(s=>s.status_val==='完成').length}/${stages.length}</span>`:''}
           </div>
-          <div class="ticket-dates">
-            ${p.start_date?`🚀 ${p.start_date}`:''}${p.time_start?' '+p.time_start:''}
-            ${p.planned_date?` ➜ 預計 ${p.planned_date}`:''}
-          </div>
+          <div class="tk-dates">${p.start_date?'🚀 '+p.start_date+(p.start_time?' '+p.start_time:''):''}${p.end_date?' ➜ 預計 '+p.end_date:''}</div>
         </div>
-        <div class="ticket-actions">
-          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();editProject('${p.id}')">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();deleteProject('${p.id}')">🗑️</button>
-          <span style="color:var(--text3);font-size:18px;cursor:pointer">▾</span>
+        <div class="tk-acts">
+          <button class="btn btn-g btn-xs" onclick="event.stopPropagation();editProject('${p.id}')">✏️</button>
+          <button class="btn btn-d btn-xs" onclick="event.stopPropagation();delProject('${p.id}')">🗑️</button>
+          <span class="tk-chevron">▾</span>
         </div>
       </div>
-      <div class="ticket-body" id="p-${p.id}">
-        <div class="node-timeline">${stageHtml}</div>
-        <div class="node-add" onclick="openStageModal('${p.id}')">+ 新增階段</div>
+      <div class="tk-body" id="tb-p-${p.id}">
+        <div class="nt-wrap">${stageHtml}</div>
+        <div class="nt-add" onclick="openStageModal('${p.id}')">+ 新增節點</div>
+        <div class="ie-actions" style="margin-top:10px">
+          <span class="ie-msg" id="pe-msg-${p.id}"></span>
+          <button class="btn btn-ok btn-sm" onclick="markProjectDone('${p.id}')">✅ 標記完成 → 移至日誌</button>
+        </div>
       </div>
     </div>`;
   }).join('');
 }
 
 function openProjectModal(){
-  document.getElementById('project-edit-id').value='';
-  ['p-name','p-vendor','p-dept','p-start','p-planned','p-time-start','p-time-end'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('p-status').value='進行中';
-  document.getElementById('project-modal-title').textContent='📋 新增廠商專案';
-  openModal('modal-project');
+  document.getElementById('p-eid').value='';
+  ['p-name','p-vendor','p-dept','p-sd','p-ed','p-st2','p-et'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('p-st').value='進行中';
+  document.getElementById('p-mh').textContent='📋 新增廠商專案';
+  openMo('mo-project');
 }
 function editProject(id){
   const p=projects.find(x=>x.id==id);if(!p)return;
-  document.getElementById('project-edit-id').value=id;
+  document.getElementById('p-eid').value=id;
   document.getElementById('p-name').value=p.name||'';document.getElementById('p-vendor').value=p.vendor||'';
-  document.getElementById('p-dept').value=p.dept||'';document.getElementById('p-status').value=p.status||'進行中';
-  document.getElementById('p-start').value=p.start_date||'';document.getElementById('p-planned').value=p.planned_date||'';
-  document.getElementById('p-time-start').value=p.time_start||'';document.getElementById('p-time-end').value=p.time_end||'';
-  document.getElementById('project-modal-title').textContent='✏️ 編輯廠商專案';
-  openModal('modal-project');
+  document.getElementById('p-dept').value=p.dept||'';document.getElementById('p-st').value=p.status||'進行中';
+  document.getElementById('p-sd').value=p.start_date||'';document.getElementById('p-ed').value=p.end_date||'';
+  document.getElementById('p-st2').value=p.start_time||'';document.getElementById('p-et').value=p.end_time||'';
+  document.getElementById('p-mh').textContent='✏️ 編輯廠商專案';
+  openMo('mo-project');
 }
 async function saveProject(){
-  const id=document.getElementById('project-edit-id').value;
-  const data={name:document.getElementById('p-name').value.trim(),vendor:document.getElementById('p-vendor').value,dept:document.getElementById('p-dept').value,status:document.getElementById('p-status').value,start_date:document.getElementById('p-start').value||null,planned_date:document.getElementById('p-planned').value||null,time_start:document.getElementById('p-time-start').value||null,time_end:document.getElementById('p-time-end').value||null,created_at:new Date().toISOString()};
+  const id=document.getElementById('p-eid').value;
+  const data={name:document.getElementById('p-name').value.trim(),vendor:document.getElementById('p-vendor').value,dept:document.getElementById('p-dept').value,status:document.getElementById('p-st').value,start_date:document.getElementById('p-sd').value||null,end_date:document.getElementById('p-ed').value||null,start_time:document.getElementById('p-st2').value||null,end_time:document.getElementById('p-et').value||null};
   if(!data.name){toast('請填寫專案名稱');return;}
+  if(data.status==='已完成')data.done_date=new Date().toISOString().split('T')[0];
   try{
     if(id){const ex=projects.find(p=>p.id==id);data.stages=ex?.stages||[];await sb('projects','PATCH',data,`?id=eq.${id}`);projects=projects.map(p=>p.id==id?{...p,...data}:p);}
-    else{const r=await sb('projects','POST',{...data,stages:[]});if(r&&r[0])projects.unshift(r[0]);else projects.unshift({...data,stages:[],id:Date.now()});}
-  }catch(e){if(id)projects=projects.map(p=>p.id==id?{...p,...data}:p);else projects.unshift({...data,stages:[],id:Date.now()});}
-  closeModal('modal-project');renderProjects();renderCalendar();renderToday();toast('✅ 專案已儲存');
+    else{data.created_at=new Date().toISOString();data.stages=[];const rv=await sb('projects','POST',data);if(rv&&rv[0])projects.unshift(rv[0]);else projects.unshift({...data,id:Date.now()});}
+  }catch(e){if(id)projects=projects.map(p=>p.id==id?{...p,...data}:p);else{data.created_at=new Date().toISOString();data.stages=[];projects.unshift({...data,id:Date.now()});}}
+  if(data.status==='已完成')autoLog('專案','廠商專案',data.name,data);
+  closeMo('mo-project');renderProjects();renderCalendar();renderToday();renderWorkLog();toast('✅ 專案已儲存');
 }
-async function deleteProject(id){
+async function delProject(id){
   if(!confirm('確定刪除此專案？'))return;
   try{await sb('projects','DELETE',null,`?id=eq.${id}`);}catch(e){}
   projects=projects.filter(p=>p.id!=id);renderProjects();renderCalendar();renderToday();toast('🗑️ 已刪除');
 }
-function openStageModal(pid){document.getElementById('stage-project-id').value=pid;['s-title','s-date','s-note'].forEach(id=>document.getElementById(id).value='');document.getElementById('s-owner').value='我方';document.getElementById('s-status-val').value='進行中';openModal('modal-stage');}
+async function markProjectDone(id){
+  const p=projects.find(x=>x.id==id);if(!p)return;
+  const data={...p,status:'已完成',done_date:new Date().toISOString().split('T')[0]};
+  try{await sb('projects','PATCH',data,`?id=eq.${id}`);}catch(e){}
+  projects=projects.map(x=>x.id==id?{...x,...data}:x);
+  autoLog('專案','廠商專案',p.name,data);
+  renderProjects();renderCalendar();renderToday();renderWorkLog();
+  document.getElementById('pe-msg-'+id).textContent='↩ 已移至工作日誌';
+  toast('✅ 專案完成！');
+}
+
+function openStageModal(pid){
+  document.getElementById('sn-pid').value=pid;
+  ['sn-title','sn-date','sn-time','sn-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('sn-owner').value='我方';document.getElementById('sn-st').value='進行中';
+  openMo('mo-stage');
+}
 async function saveStage(){
-  const pid=document.getElementById('stage-project-id').value;
-  const stage={title:document.getElementById('s-title').value.trim(),date:document.getElementById('s-date').value,owner:document.getElementById('s-owner').value,note:document.getElementById('s-note').value,status_val:document.getElementById('s-status-val').value};
+  const pid=document.getElementById('sn-pid').value;
+  const stage={title:document.getElementById('sn-title').value.trim(),date:document.getElementById('sn-date').value,time:document.getElementById('sn-time').value||null,owner:document.getElementById('sn-owner').value,note:document.getElementById('sn-note').value,status_val:document.getElementById('sn-st').value};
   if(!stage.title){toast('請填寫節點名稱');return;}
   const p=projects.find(x=>x.id==pid);if(!p)return;
   p.stages=p.stages||[];p.stages.push(stage);
   try{await sb('projects','PATCH',{stages:p.stages},`?id=eq.${pid}`);}catch(e){}
-  closeModal('modal-stage');renderProjects();toast('✅ 階段已新增');
+  closeMo('mo-stage');renderProjects();renderCalendar();toast('✅ 節點已新增');
 }
-async function deleteStage(pid,idx){
+async function delStage(pid,idx){
   const p=projects.find(x=>x.id==pid);if(!p)return;
   p.stages.splice(idx,1);
   try{await sb('projects','PATCH',{stages:p.stages},`?id=eq.${pid}`);}catch(e){}
-  renderProjects();toast('🗑️ 已刪除');
+  renderProjects();renderCalendar();toast('🗑️ 已刪除');
 }
 
-// ===== MISC =====
-function renderMisc(){
-  const tf=document.getElementById('m-f-type')?.value||'';
-  const sf=document.getElementById('m-f-status')?.value||'';
-  const filtered=misc.filter(m=>{
-    if(tf&&m.type!==tf)return false;
-    if(sf&&m.status!==sf)return false;
-    return true;
-  });
-  const el=document.getElementById('misc-list');
-  if(!filtered.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)">📭 沒有雜事</div>`;return;}
-  const tc={'待辦':'#3b82f6','⚠️ 隱患':'#f59e0b','待討論':'#8b5cf6'};
-  const sc={待處理:'badge-orange',處理中:'badge-blue'};
-  el.innerHTML=filtered.map(m=>`<div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:var(--radius-sm);background:var(--surface);border:1.5px solid var(--border);margin-bottom:10px;transition:border-color 0.18s" onmouseenter="this.style.borderColor='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)'">
-    <div style="width:11px;height:11px;border-radius:50%;background:${tc[m.type]||'#94a3b8'};margin-top:5px;flex-shrink:0"></div>
-    <div style="flex:1">
-      <div style="font-size:var(--font-base);font-weight:700;color:var(--text);margin-bottom:4px">${m.title}</div>
-      <div style="font-size:var(--font-xs);color:var(--text3);font-weight:600">
-        ${m.type||'待辦'}
-        ${m.start_date?' ｜ 🚀 '+m.start_date:''}${m.time_start?' '+m.time_start:''}
-        ${m.planned_date?' ➜ '+m.planned_date:''}
-        ${m.note?' ｜ '+m.note:''}
-      </div>
-    </div>
-    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
-      <span class="badge ${sc[m.status]||'badge-gray'}">${m.status}</span>
-      <button class="btn btn-ghost btn-sm" onclick="editMisc('${m.id}')">✏️</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteMisc('${m.id}')">🗑️</button>
-    </div>
-  </div>`).join('');
-}
-
-function openMiscModal(){
-  document.getElementById('misc-edit-id').value='';
-  ['m-title','m-note','m-start','m-planned','m-time-start','m-time-end'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('m-type').value='待辦';document.getElementById('m-status').value='待處理';
-  document.getElementById('misc-modal-title').textContent='📌 新增雜事';
-  openModal('modal-misc');
-}
-function editMisc(id){
-  const m=misc.find(x=>x.id==id);if(!m)return;
-  document.getElementById('misc-edit-id').value=id;
-  document.getElementById('m-title').value=m.title||'';document.getElementById('m-note').value=m.note||'';
-  document.getElementById('m-type').value=m.type||'待辦';document.getElementById('m-status').value=m.status||'待處理';
-  document.getElementById('m-start').value=m.start_date||'';document.getElementById('m-planned').value=m.planned_date||'';
-  document.getElementById('m-time-start').value=m.time_start||'';document.getElementById('m-time-end').value=m.time_end||'';
-  document.getElementById('misc-modal-title').textContent='✏️ 編輯雜事';
-  openModal('modal-misc');
-}
-async function saveMisc(){
-  const id=document.getElementById('misc-edit-id').value;
-  const data={title:document.getElementById('m-title').value.trim(),type:document.getElementById('m-type').value,status:document.getElementById('m-status').value,note:document.getElementById('m-note').value,start_date:document.getElementById('m-start').value||null,planned_date:document.getElementById('m-planned').value||null,time_start:document.getElementById('m-time-start').value||null,time_end:document.getElementById('m-time-end').value||null,created_at:new Date().toISOString()};
-  if(!data.title){toast('請填寫標題');return;}
-  try{
-    if(id){await sb('misc_tasks','PATCH',data,`?id=eq.${id}`);misc=misc.map(m=>m.id==id?{...m,...data}:m);}
-    else{const r=await sb('misc_tasks','POST',data);if(r&&r[0])misc.unshift(r[0]);else misc.unshift({...data,id:Date.now()});}
-  }catch(e){if(id)misc=misc.map(m=>m.id==id?{...m,...data}:m);else misc.unshift({...data,id:Date.now()});}
-  closeModal('modal-misc');renderMisc();renderCalendar();renderToday();addLog('雜事',data.type,data.title);toast('✅ 已儲存');
-}
-async function deleteMisc(id){
-  if(!confirm('確定刪除？'))return;
-  try{await sb('misc_tasks','DELETE',null,`?id=eq.${id}`);}catch(e){}
-  misc=misc.filter(m=>m.id!=id);renderMisc();renderCalendar();renderToday();toast('🗑️ 已刪除');
-}
-
-// ===== WORKLOG =====
-function addLog(type,subtype,content){
+// ══════════════════════════
+// WORKLOG
+// ══════════════════════════
+function autoLog(type,subtype,content,source){
   const n=new Date();
-  const entry={id:Date.now(),log_date:n.toISOString().split('T')[0],log_time:n.toTimeString().substring(0,5),type,subtype,content,created_at:n.toISOString()};
+  const entry={id:'al_'+Date.now(),log_date:n.toISOString().split('T')[0],log_time:n.toTimeString().substring(0,5),type,subtype,content,source_id:source?.id||null,source_data:JSON.stringify(source||{}),auto:true,starred:0,created_at:n.toISOString()};
   logs.unshift(entry);
   try{sb('work_logs','POST',entry);}catch(e){}
 }
-function openLogModal(prefill=null){
-  document.getElementById('log-edit-id').value=prefill?.id||'';
-  document.getElementById('log-date').value=prefill?.log_date||new Date().toISOString().split('T')[0];
-  document.getElementById('log-time').value=prefill?.log_time||new Date().toTimeString().substring(0,5);
-  document.getElementById('log-type').value=prefill?.type||'手動';
-  document.getElementById('log-content').value=prefill?.content||'';
-  document.getElementById('log-modal-title').textContent=prefill?'✏️ 編輯日誌':'📖 手動新增日誌';
-  openModal('modal-log');
+
+function setWlMode(m){
+  wlMode=m;
+  document.querySelectorAll('.wl-mode-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('wl-m-'+m).classList.add('on');
+  document.getElementById('wl-custom-month').style.display=m==='custom'?'block':'none';
+  renderWorkLog();
 }
-async function saveLog(){
-  const id=document.getElementById('log-edit-id').value;
-  const data={log_date:document.getElementById('log-date').value,log_time:document.getElementById('log-time').value,type:document.getElementById('log-type').value,content:document.getElementById('log-content').value.trim(),created_at:new Date().toISOString()};
-  if(!data.content){toast('請填寫內容');return;}
-  try{
-    if(id){await sb('work_logs','PATCH',data,`?id=eq.${id}`);logs=logs.map(l=>l.id==id?{...l,...data}:l);}
-    else{const r=await sb('work_logs','POST',data);if(r&&r[0])logs.unshift(r[0]);else logs.unshift({...data,id:Date.now()});}
-  }catch(e){if(id)logs=logs.map(l=>l.id==id?{...l,...data}:l);else logs.unshift({...data,id:Date.now()});}
-  closeModal('modal-log');renderWorkLog();toast('✅ 日誌已儲存');
-}
-async function deleteLog(id){
-  if(!confirm('確定刪除？'))return;
-  try{await sb('work_logs','DELETE',null,`?id=eq.${id}`);}catch(e){}
-  logs=logs.filter(l=>l.id!=id);renderWorkLog();toast('🗑️ 已刪除');
-}
+
 function renderWorkLog(){
-  const mf=document.getElementById('log-month')?.value||'';
-  const tf=document.getElementById('log-f-type')?.value||'';
-  const filtered=logs.filter(l=>{
-    if(mf&&!l.log_date?.startsWith(mf))return false;
+  const tf=document.getElementById('wl-ft')?.value||'';
+  const sf=document.getElementById('wl-fstar')?.value||'';
+  const today=new Date();
+  const thisM=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
+  const lastD=new Date(today.getFullYear(),today.getMonth(),0);
+  const lastM=`${lastD.getFullYear()}-${String(lastD.getMonth()+1).padStart(2,'0')}`;
+  const customM=document.getElementById('wl-custom-month')?.value||'';
+
+  let f=logs.filter(l=>{
+    if(wlMode==='this'&&!l.log_date?.startsWith(thisM))return false;
+    if(wlMode==='last'&&!l.log_date?.startsWith(lastM))return false;
+    if(wlMode==='custom'&&customM&&!l.log_date?.startsWith(customM))return false;
     if(tf&&l.type!==tf)return false;
+    if(sf==='1'&&!l.starred&&!starred['log_'+l.id])return false;
     return true;
   });
+
+  // group by date
   const byDay={};
-  filtered.forEach(l=>{const d=l.log_date||'未知';if(!byDay[d])byDay[d]=[];byDay[d].push(l);});
-  const tc={報修:'var(--accent)',專案:'var(--primary)',例行:'var(--green)',雜事:'var(--yellow)',手動:'var(--text3)'};
-  const el=document.getElementById('worklog-list');
-  if(!filtered.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)">📭 還沒有日誌</div>`;return;}
-  el.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:18px;box-shadow:var(--shadow)">
-    ${Object.entries(byDay).map(([date,entries])=>`
-      <div style="margin-bottom:20px">
-        <div class="log-day-header">${date}</div>
-        ${entries.map(e=>`<div class="log-entry">
-          <div class="log-time">${e.log_time||''}</div>
-          <div class="log-dot" style="background:${tc[e.type]||'var(--text3)'}"></div>
-          <div class="log-main">
-            <div class="log-text">${e.content}</div>
-            <div class="log-sub">${e.type||''} ${e.subtype?'｜ '+e.subtype:''}</div>
-          </div>
-          <div style="display:flex;gap:6px;flex-shrink:0">
-            <button class="btn btn-ghost btn-xs" onclick="openLogModal(${JSON.stringify(e).replace(/"/g,'&quot;')})">✏️</button>
-            <button class="btn btn-danger btn-xs" onclick="deleteLog('${e.id}')">🗑️</button>
-          </div>
-        </div>`).join('')}
-      </div>`).join('')}
+  f.forEach(l=>{const d=l.log_date||'未知';if(!byDay[d])byDay[d]=[];byDay[d].push(l);});
+
+  const el=document.getElementById('wl-list');
+  if(!f.length){el.innerHTML=`<div style="text-align:center;padding:36px;color:var(--text3)">📭 此條件下沒有紀錄</div>`;return;}
+
+  const days=['日','一','二','三','四','五','六'];
+  const typeC={報修:'var(--accent)',專案:'var(--primary)',手動:'var(--text3)'};
+
+  el.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden">
+    ${Object.entries(byDay).map(([date,entries])=>{
+      const ts=date!=='未知'?new Date(date):null;
+      const dLabel=ts?`${ts.getFullYear()}年${ts.getMonth()+1}月${ts.getDate()}日（週${days[ts.getDay()]}）`:'未知日期';
+      return`<div class="wl-group">
+        <div class="wl-dh">${dLabel}<span class="wl-dh-cnt">${entries.length} 筆</span></div>
+        ${entries.map(l=>{
+          const isStar=starred['log_'+l.id]||l.starred;
+          let srcData={};try{srcData=JSON.parse(l.source_data||'{}');}catch(e){}
+          const dur=srcData.created_at&&srcData.resolved_at?calcDur(srcData.created_at,srcData.resolved_at):'';
+          return`<div class="wl-item-wrap" id="wlw-${l.id}">
+            <div class="wl-item" onclick="toggleWl('${l.id}')">
+              <button class="star-btn ${isStar?'on':''}" onclick="event.stopPropagation();toggleStar('log',${l.id})" style="font-size:17px">★</button>
+              <div class="wl-desc">${l.content}</div>
+              <div class="wl-tags">
+                <span class="badge bb">${l.subtype||l.type||''}</span>
+                <span class="badge ${l.type==='報修'?'bg':'bb'}">${l.type==='報修'?'已解決':'已完成'}</span>
+              </div>
+            </div>
+            <div class="wl-body" id="wlb-${l.id}">
+              ${renderLogDetail(l,srcData,dur)}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    }).join('')}
   </div>`;
 }
 
-// ===== KB =====
+function renderLogDetail(l,src,dur){
+  return`<div class="ie-row">
+    <div class="ie-field"><span class="ie-label">內容</span><textarea class="ie-val" id="ld-desc-${l.id}" rows="3">${l.content||''}</textarea></div>
+    <div class="ie-field"><span class="ie-label">處理方式</span><textarea class="ie-val" id="ld-sol-${l.id}" rows="3">${src.handle||src.solution||''}</textarea></div>
+  </div>
+  <div class="ie-row">
+    <div class="ie-field"><span class="ie-label">觀察狀況</span><textarea class="ie-val" id="ld-obs-${l.id}" rows="2">${src.observe||src.observation||''}</textarea></div>
+    <div class="ie-field"><span class="ie-label">結果</span><textarea class="ie-val" id="ld-res-${l.id}" rows="2">${src.result||''}</textarea></div>
+  </div>
+  <div class="ie-row">
+    <div class="ie-field"><span class="ie-label">待改進</span><textarea class="ie-val" id="ld-imp-${l.id}" rows="2">${src.improve||src.improvement||''}</textarea></div>
+    <div class="ie-field"><span class="ie-label">⏱ 花費時間</span>
+      <div class="dur-box">建立 ${src.created_at?src.created_at.substring(0,10):'-'} → 完成 ${src.resolved_at?src.resolved_at.substring(0,10):(src.done_date||'-')} &nbsp;<strong style="color:var(--yellow)">${dur||'-'}</strong></div>
+    </div>
+  </div>
+  <div class="ie-row">
+    <div class="ie-field"><span class="ie-label">日期</span><input type="date" class="ie-val" id="ld-date-${l.id}" value="${l.log_date||''}"></div>
+    <div class="ie-field"><span class="ie-label">時間</span><input type="time" class="ie-val" id="ld-time-${l.id}" value="${l.log_time||''}"></div>
+  </div>
+  <div class="ie-row">
+    <div class="ie-field"><span class="ie-label">類型（改為非完成狀態 → 移回工單/專案）</span>
+      <select class="ie-val" id="ld-st-${l.id}">
+        <option value="done" selected>維持完成</option>
+        <option value="back_repair">↩ 移回報修工單（待處理）</option>
+        <option value="back_project">↩ 移回專案（進行中）</option>
+      </select>
+    </div>
+    <div></div>
+  </div>
+  <div class="ie-actions">
+    <span class="ie-msg" id="ld-msg-${l.id}"></span>
+    <button class="btn btn-d btn-sm" onclick="delLog('${l.id}')">刪除</button>
+    <button class="btn btn-p btn-sm" onclick="saveLogInline('${l.id}')">儲存修改</button>
+  </div>`;
+}
+
+function toggleWl(id){
+  const wrap=document.getElementById('wlw-'+id);
+  if(!wrap)return;
+  const body=document.getElementById('wlb-'+id);
+  const isOpen=wrap.classList.contains('wl-open');
+  wrap.classList.toggle('wl-open',!isOpen);
+  body.style.display=isOpen?'none':'block';
+  wrap.querySelector('.wl-item').classList.toggle('open',!isOpen);
+}
+
+function openLogModal(){
+  document.getElementById('log-eid').value='';
+  document.getElementById('log-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('log-time').value=new Date().toTimeString().substring(0,5);
+  document.getElementById('log-type').value='手動';
+  document.getElementById('log-content').value='';
+  document.getElementById('log-mh').textContent='📖 手動新增日誌';
+  openMo('mo-log');
+}
+async function saveLog(){
+  const id=document.getElementById('log-eid').value;
+  const data={log_date:document.getElementById('log-date').value,log_time:document.getElementById('log-time').value,type:document.getElementById('log-type').value,content:document.getElementById('log-content').value.trim(),source_data:'{}',auto:false,starred:0,created_at:new Date().toISOString()};
+  if(!data.content){toast('請填寫內容');return;}
+  try{
+    if(id){await sb('work_logs','PATCH',data,`?id=eq.${id}`);logs=logs.map(l=>l.id==id?{...l,...data}:l);}
+    else{const rv=await sb('work_logs','POST',data);if(rv&&rv[0])logs.unshift(rv[0]);else logs.unshift({...data,id:'m_'+Date.now()});}
+  }catch(e){if(id)logs=logs.map(l=>l.id==id?{...l,...data}:l);else logs.unshift({...data,id:'m_'+Date.now()});}
+  closeMo('mo-log');renderWorkLog();toast('✅ 日誌已儲存');
+}
+async function saveLogInline(id){
+  const l=logs.find(x=>x.id==id);if(!l)return;
+  const msg=document.getElementById('ld-msg-'+id);
+  const st=document.getElementById('ld-st-'+id).value;
+  const content=document.getElementById('ld-desc-'+id).value.trim();
+  const data={...l,content,log_date:document.getElementById('ld-date-'+id).value,log_time:document.getElementById('ld-time-'+id).value};
+  try{await sb('work_logs','PATCH',data,`?id=eq.${id}`);}catch(e){}
+  logs=logs.map(x=>x.id==id?{...x,...data}:x);
+  if(st==='back_repair'){
+    // create new repair from log
+    const newR={description:content,type:l.subtype||'其他',status:'待處理',created_at:new Date().toISOString(),nodes:[]};
+    try{const rv=await sb('repairs','POST',newR);if(rv&&rv[0])repairs.unshift(rv[0]);else repairs.unshift({...newR,id:Date.now()});}catch(e){repairs.unshift({...newR,id:Date.now()});}
+    msg.style.color='var(--green)';msg.textContent='↩ 已移回報修工單';
+    setTimeout(()=>{renderRepairs();renderWorkLog();},900);
+  }else if(st==='back_project'){
+    const newP={name:content,status:'進行中',created_at:new Date().toISOString(),stages:[]};
+    try{const rv=await sb('projects','POST',newP);if(rv&&rv[0])projects.unshift(rv[0]);else projects.unshift({...newP,id:Date.now()});}catch(e){projects.unshift({...newP,id:Date.now()});}
+    msg.style.color='var(--green)';msg.textContent='↩ 已移回廠商專案';
+    setTimeout(()=>{renderProjects();renderWorkLog();},900);
+  }else{
+    msg.style.color='var(--green)';msg.textContent='✓ 已儲存';
+    setTimeout(()=>renderWorkLog(),500);
+  }
+}
+async function delLog(id){
+  if(!confirm('確定刪除此筆日誌？此操作無法復原。'))return;
+  try{await sb('work_logs','DELETE',null,`?id=eq.${id}`);}catch(e){}
+  logs=logs.filter(l=>l.id!=id);renderWorkLog();toast('🗑️ 已刪除');
+}
+
+// ══════════════════════════
+// STAR
+// ══════════════════════════
+function toggleStar(type,id){
+  const key=type+'_'+id;
+  starred[key]=!starred[key];
+  localStorage.setItem('mis_starred',JSON.stringify(starred));
+  // update btn
+  document.querySelectorAll(`.star-btn`).forEach(b=>{
+    if(b.dataset&&b.dataset.sid==id){}
+  });
+  if(type==='r')renderRepairs();
+  else if(type==='p')renderProjects();
+  else if(type==='log')renderWorkLog();
+}
+
+// ══════════════════════════
+// KB
+// ══════════════════════════
 const KB_CATS=['全部','個人電腦','印表機','監視器','ERP','通知','貼標機','廠商','mail','伺服器','公文或流程相關','網路相關','森淨系統','電話','物品領借還','其他'];
 function renderKbCats(){
-  document.getElementById('kb-cat-list').innerHTML=KB_CATS.map(cat=>{
-    const cnt=cat==='全部'?kbItems.length:kbItems.filter(k=>k.category===cat).length;
-    return`<div class="kb-cat-item ${currentKbCat===cat?'active':''}" onclick="selectKbCat('${cat}')"><span>${cat}</span><span class="kb-cat-count">${cnt}</span></div>`;
-  }).join('');
+  document.getElementById('kb-cats').innerHTML=KB_CATS.map(c=>`<div class="kb-cat ${kbCat===c?'active':''}" onclick="kbCat='${c}';renderKbCats();renderKb()"><span>${c}</span><span style="opacity:.6;font-size:11px">${c==='全部'?kbItems.length:kbItems.filter(k=>k.category===c).length}</span></div>`).join('');
 }
-function selectKbCat(cat){currentKbCat=cat;renderKbCats();renderKb();}
 function renderKb(){
-  const s=document.getElementById('kb-search')?.value.toLowerCase()||'';
-  const subF=document.getElementById('kb-f-sub')?.value||'';
-  const skF=document.getElementById('kb-f-skill')?.value||'';
-  const filtered=kbItems.filter(k=>{
-    if(currentKbCat!=='全部'&&k.category!==currentKbCat)return false;
+  const s=document.getElementById('kb-srch')?.value.toLowerCase()||'';
+  const subF=document.getElementById('kb-fsub')?.value||'';
+  const skF=document.getElementById('kb-fsk')?.value||'';
+  const f=kbItems.filter(k=>{
+    if(kbCat!=='全部'&&k.category!==kbCat)return false;
     if(s&&!k.description?.toLowerCase().includes(s)&&!k.solution?.toLowerCase().includes(s))return false;
     if(subF&&k.sub_category!==subF)return false;
     if(skF&&k.skill_level!==skF)return false;
     return true;
   });
+  const sm={'我會':'ks1','部分會':'ks2','不會':'ks3','待確認':'ks4'};
   const el=document.getElementById('kb-list');
-  if(!filtered.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)">📭 沒有知識</div>`;return;}
-  const sm={'我會':'kb-skill-1','部分會':'kb-skill-2','不會':'kb-skill-3','待確認':'kb-skill-4'};
-  el.innerHTML=filtered.map(k=>`<div class="kb-entry">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px">
-      <div style="font-size:var(--font-base);font-weight:700;color:var(--text)">${k.description}</div>
-      <div style="display:flex;gap:6px;flex-shrink:0">
-        <button class="btn btn-ghost btn-sm" onclick="editKb('${k.id}')">✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteKb('${k.id}')">🗑️</button>
+  if(!f.length){el.innerHTML=`<div style="text-align:center;padding:36px;color:var(--text3)">📭 沒有知識</div>`;return;}
+  el.innerHTML=f.map(k=>`<div class="kb-entry">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:7px">
+      <div style="font-size:15px;font-weight:700">${k.description}</div>
+      <div style="display:flex;gap:5px;flex-shrink:0">
+        <button class="btn btn-g btn-xs" onclick="editKb('${k.id}')">✏️</button>
+        <button class="btn btn-d btn-xs" onclick="delKb('${k.id}')">🗑️</button>
       </div>
     </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
-      <span class="badge badge-blue">${k.category}</span>
-      <span class="badge badge-gray">${k.sub_category||'其他'}</span>
-      <span class="badge ${sm[k.skill_level]||'kb-skill-4'}" style="padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700">${k.skill_level||'待確認'}</span>
+    <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px">
+      <span class="badge bb">${k.category}</span>
+      <span class="badge bgr">${k.sub_category||'其他'}</span>
+      <span class="badge ${sm[k.skill_level]||'ks4'}" style="padding:3px 9px;border-radius:999px">${k.skill_level||'待確認'}</span>
     </div>
-    ${k.solution?`<div style="font-size:var(--font-sm);color:var(--text2);line-height:1.6;white-space:pre-wrap">${k.solution}</div>`:''}
-    <div style="margin-top:10px">
-      <button class="btn btn-ghost btn-sm" onclick="viewRelatedRepairs('${k.category}')">📋 查看相關工單</button>
-    </div>
+    ${k.solution?`<div style="font-size:13px;color:var(--text2);line-height:1.6;white-space:pre-wrap">${k.solution}</div>`:''}
+    <div style="margin-top:8px"><button class="btn btn-g btn-xs" onclick="viewRelated('${k.category}')">📋 查看相關工單</button></div>
   </div>`).join('');
 }
-function openKbModal(){
-  document.getElementById('kb-edit-id').value='';document.getElementById('kb-desc').value='';document.getElementById('kb-solution').value='';
-  document.getElementById('kb-modal-title').textContent='📚 新增知識';openModal('modal-kb');
-}
+function openKbModal(){document.getElementById('kb-eid').value='';document.getElementById('kb-desc').value='';document.getElementById('kb-sol').value='';document.getElementById('kb-mh').textContent='📚 新增知識';openMo('mo-kb');}
 function editKb(id){
   const k=kbItems.find(x=>x.id==id);if(!k)return;
-  document.getElementById('kb-edit-id').value=id;document.getElementById('kb-cat').value=k.category||'個人電腦';
+  document.getElementById('kb-eid').value=id;document.getElementById('kb-cat').value=k.category||'個人電腦';
   document.getElementById('kb-sub').value=k.sub_category||'操作步驟';document.getElementById('kb-desc').value=k.description||'';
-  document.getElementById('kb-solution').value=k.solution||'';document.getElementById('kb-skill').value=k.skill_level||'我會';
-  document.getElementById('kb-modal-title').textContent='✏️ 編輯知識';openModal('modal-kb');
+  document.getElementById('kb-sol').value=k.solution||'';document.getElementById('kb-sk').value=k.skill_level||'我會';
+  document.getElementById('kb-mh').textContent='✏️ 編輯知識';openMo('mo-kb');
 }
 async function saveKb(){
-  const id=document.getElementById('kb-edit-id').value;
-  const data={category:document.getElementById('kb-cat').value,sub_category:document.getElementById('kb-sub').value,description:document.getElementById('kb-desc').value.trim(),solution:document.getElementById('kb-solution').value,skill_level:document.getElementById('kb-skill').value,created_at:new Date().toISOString()};
+  const id=document.getElementById('kb-eid').value;
+  const data={category:document.getElementById('kb-cat').value,sub_category:document.getElementById('kb-sub').value,description:document.getElementById('kb-desc').value.trim(),solution:document.getElementById('kb-sol').value,skill_level:document.getElementById('kb-sk').value,created_at:new Date().toISOString()};
   if(!data.description){toast('請填寫問題描述');return;}
   try{
     if(id){await sb('kb_items','PATCH',data,`?id=eq.${id}`);kbItems=kbItems.map(k=>k.id==id?{...k,...data}:k);}
-    else{const r=await sb('kb_items','POST',data);if(r&&r[0])kbItems.unshift(r[0]);else kbItems.unshift({...data,id:Date.now()});}
+    else{const rv=await sb('kb_items','POST',data);if(rv&&rv[0])kbItems.unshift(rv[0]);else kbItems.unshift({...data,id:Date.now()});}
   }catch(e){if(id)kbItems=kbItems.map(k=>k.id==id?{...k,...data}:k);else kbItems.unshift({...data,id:Date.now()});}
-  closeModal('modal-kb');renderKb();renderKbCats();toast('✅ 知識已儲存');
+  closeMo('mo-kb');renderKb();renderKbCats();toast('✅ 知識已儲存');
 }
-async function deleteKb(id){
+async function delKb(id){
   if(!confirm('確定刪除？'))return;
   try{await sb('kb_items','DELETE',null,`?id=eq.${id}`);}catch(e){}
   kbItems=kbItems.filter(k=>k.id!=id);renderKb();renderKbCats();toast('🗑️ 已刪除');
 }
-function viewRelatedRepairs(cat){showPage('repair');document.getElementById('r-f-type').value=cat;renderRepairs();toast(`📋 顯示「${cat}」相關工單`);}
+function viewRelated(cat){showPage('repair');document.getElementById('r-ft').value=cat;renderRepairs();toast(`📋 顯示「${cat}」相關工單`);}
 
-// ===== INVENTORY =====
+// ══════════════════════════
+// INVENTORY
+// ══════════════════════════
 function switchInvTab(tab,el){
-  ['items','consume','borrow','history'].forEach(t=>document.getElementById('inv-tab-'+t).style.display='none');
+  ['items','consume','borrow','history'].forEach(t=>document.getElementById('inv-'+t).style.display='none');
   document.querySelectorAll('.inv-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('inv-tab-'+tab).style.display='block';el.classList.add('active');
+  document.getElementById('inv-'+tab).style.display='block';el.classList.add('active');
 }
 function renderInvItems(){
-  const tf=document.getElementById('inv-f-type')?.value||'';
-  const cf=document.getElementById('inv-f-cat')?.value||'';
-  const filtered=invItems.filter(i=>{if(tf&&i.item_type!==tf)return false;if(cf&&i.category!==cf)return false;return true;});
-  document.getElementById('inv-items-tbody').innerHTML=filtered.map(i=>`<tr>
-    <td><strong>${i.name}</strong></td>
-    <td><span class="badge ${i.item_type==='消耗品'?'badge-orange':'badge-blue'}">${i.item_type}</span></td>
-    <td>${i.category||'-'}</td>
-    <td><strong style="font-size:20px;font-family:'Nunito',sans-serif;color:var(--primary)">${i.quantity}</strong></td>
-    <td style="color:var(--text3)">${i.note||'-'}</td>
-    <td><button class="btn btn-ghost btn-sm" onclick="editInvItem('${i.id}')">✏️</button> <button class="btn btn-danger btn-sm" onclick="deleteInvItem('${i.id}')">🗑️</button></td>
-  </tr>`).join('');
+  const tf=document.getElementById('inv-ft')?.value||'',cf=document.getElementById('inv-fc')?.value||'';
+  const f=invItems.filter(i=>{if(tf&&i.item_type!==tf)return false;if(cf&&i.category!==cf)return false;return true;});
+  document.getElementById('inv-tbody').innerHTML=f.map(i=>`<tr><td><strong>${i.name}</strong></td><td><span class="badge ${i.item_type==='消耗品'?'bo':'bb'}">${i.item_type}</span></td><td>${i.category||'-'}</td><td><strong style="font-size:18px;font-family:'Nunito',sans-serif;color:var(--primary)">${i.quantity}</strong></td><td style="color:var(--text3)">${i.note||'-'}</td><td><button class="btn btn-g btn-xs" onclick="editInvItem('${i.id}')">✏️</button> <button class="btn btn-d btn-xs" onclick="delInvItem('${i.id}')">🗑️</button></td></tr>`).join('');
 }
-function openInvItemModal(){
-  document.getElementById('inv-item-edit-id').value='';['ii-name','ii-qty','ii-note'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('ii-qty').value='1';document.getElementById('inv-item-title').textContent='📦 新增物品';openModal('modal-inv-item');
-}
-function editInvItem(id){
-  const i=invItems.find(x=>x.id==id);if(!i)return;
-  document.getElementById('inv-item-edit-id').value=id;document.getElementById('ii-name').value=i.name||'';
-  document.getElementById('ii-type').value=i.item_type||'消耗品';document.getElementById('ii-cat').value=i.category||'線材';
-  document.getElementById('ii-qty').value=i.quantity||0;document.getElementById('ii-note').value=i.note||'';
-  document.getElementById('inv-item-title').textContent='✏️ 編輯物品';openModal('modal-inv-item');
-}
+function openInvItemModal(){document.getElementById('ii-eid').value='';['ii-name','ii-note'].forEach(id=>document.getElementById(id).value='');document.getElementById('ii-qty').value='1';document.getElementById('ii-mh').textContent='📦 新增物品';openMo('mo-invitem');}
+function editInvItem(id){const i=invItems.find(x=>x.id==id);if(!i)return;document.getElementById('ii-eid').value=id;document.getElementById('ii-name').value=i.name||'';document.getElementById('ii-type').value=i.item_type||'消耗品';document.getElementById('ii-cat').value=i.category||'線材';document.getElementById('ii-qty').value=i.quantity||0;document.getElementById('ii-note').value=i.note||'';document.getElementById('ii-mh').textContent='✏️ 編輯物品';openMo('mo-invitem');}
 async function saveInvItem(){
-  const id=document.getElementById('inv-item-edit-id').value;
+  const id=document.getElementById('ii-eid').value;
   const data={name:document.getElementById('ii-name').value.trim(),item_type:document.getElementById('ii-type').value,category:document.getElementById('ii-cat').value,quantity:parseInt(document.getElementById('ii-qty').value)||0,note:document.getElementById('ii-note').value,created_at:new Date().toISOString()};
   if(!data.name){toast('請填寫名稱');return;}
-  try{
-    if(id){await sb('inv_items','PATCH',data,`?id=eq.${id}`);invItems=invItems.map(i=>i.id==id?{...i,...data}:i);}
-    else{const r=await sb('inv_items','POST',data);if(r&&r[0])invItems.push(r[0]);else invItems.push({...data,id:Date.now()});}
-  }catch(e){if(id)invItems=invItems.map(i=>i.id==id?{...i,...data}:i);else invItems.push({...data,id:Date.now()});}
-  closeModal('modal-inv-item');renderInvItems();toast('✅ 物品已儲存');
+  try{if(id){await sb('inv_items','PATCH',data,`?id=eq.${id}`);invItems=invItems.map(i=>i.id==id?{...i,...data}:i);}else{const rv=await sb('inv_items','POST',data);if(rv&&rv[0])invItems.push(rv[0]);else invItems.push({...data,id:Date.now()});}}catch(e){if(id)invItems=invItems.map(i=>i.id==id?{...i,...data}:i);else invItems.push({...data,id:Date.now()});}
+  closeMo('mo-invitem');renderInvItems();toast('✅ 已儲存');
 }
-async function deleteInvItem(id){
-  if(!confirm('確定刪除？'))return;
-  try{await sb('inv_items','DELETE',null,`?id=eq.${id}`);}catch(e){}
-  invItems=invItems.filter(i=>i.id!=id);renderInvItems();toast('🗑️ 已刪除');
-}
+async function delInvItem(id){if(!confirm('確定刪除？'))return;try{await sb('inv_items','DELETE',null,`?id=eq.${id}`);}catch(e){}invItems=invItems.filter(i=>i.id!=id);renderInvItems();toast('🗑️ 已刪除');}
 function openConsumeModal(){
-  const cons=invItems.filter(i=>i.item_type==='消耗品');
-  document.getElementById('c-item').innerHTML=cons.map(i=>`<option value="${i.id}">${i.name}（剩${i.quantity}）</option>`).join('');
-  document.getElementById('c-ticket').innerHTML='<option value="">無</option>'+repairs.filter(r=>r.status!=='已完成').map(r=>`<option value="${r.id}">${r.type}：${(r.description||'').substring(0,15)}</option>`).join('');
+  const c=invItems.filter(i=>i.item_type==='消耗品');
+  document.getElementById('c-item').innerHTML=c.map(i=>`<option value="${i.id}">${i.name}（剩${i.quantity}）</option>`).join('');
+  document.getElementById('c-ticket').innerHTML='<option value="">無</option>'+repairs.filter(r=>r.status!=='已解決').map(r=>`<option value="${r.id}">${r.type}：${(r.description||'').substring(0,15)}</option>`).join('');
   document.getElementById('c-date').value=new Date().toISOString().split('T')[0];
-  document.getElementById('c-qty').value=1;document.getElementById('c-person').value='';document.getElementById('c-note').value='';document.getElementById('c-charged').checked=false;
-  openModal('modal-consume');
+  ['c-qty','c-person','c-note'].forEach(id=>{const e=document.getElementById(id);if(e){e.value=id==='c-qty'?'1':'';} });
+  document.getElementById('c-charged').checked=false;
+  openMo('mo-consume');
 }
 async function saveConsume(){
-  const itemId=document.getElementById('c-item').value;const qty=parseInt(document.getElementById('c-qty').value)||1;
+  const itemId=document.getElementById('c-item').value,qty=parseInt(document.getElementById('c-qty').value)||1;
   const item=invItems.find(i=>i.id==itemId);if(!item){toast('請選擇物品');return;}
   const data={item_id:itemId,item_name:item.name,quantity:qty,date:document.getElementById('c-date').value,person:document.getElementById('c-person').value,ticket_id:document.getElementById('c-ticket').value||null,note:document.getElementById('c-note').value,charged:document.getElementById('c-charged').checked,created_at:new Date().toISOString()};
-  const newQty=Math.max(0,item.quantity-qty);
-  try{await sb('inv_items','PATCH',{quantity:newQty},`?id=eq.${itemId}`);item.quantity=newQty;const r=await sb('consumes','POST',data);if(r&&r[0])consumes.unshift(r[0]);else consumes.unshift({...data,id:Date.now()});}
-  catch(e){item.quantity=newQty;consumes.unshift({...data,id:Date.now()});}
-  addInvHistory(item.name,'領用',-qty,data.person+'領用');
-  closeModal('modal-consume');renderInvItems();renderConsumes();renderInvHistory();toast(`✅ 領用完成，${item.name} 剩 ${newQty}`);
+  const newQ=Math.max(0,item.quantity-qty);
+  try{await sb('inv_items','PATCH',{quantity:newQ},`?id=eq.${itemId}`);item.quantity=newQ;const rv=await sb('consumes','POST',data);if(rv&&rv[0])consumes.unshift(rv[0]);else consumes.unshift({...data,id:Date.now()});}catch(e){item.quantity=newQ;consumes.unshift({...data,id:Date.now()});}
+  addInvH(item.name,'領用',-qty,data.person+'領用');closeMo('mo-consume');renderInvItems();renderConsumes();renderInvHist();toast(`✅ ${item.name} 剩 ${newQ}`);
 }
-function renderConsumes(){
-  document.getElementById('consume-tbody').innerHTML=consumes.map(c=>`<tr>
-    <td><strong>${c.item_name}</strong></td><td>${c.quantity}</td><td>${c.date||'-'}</td>
-    <td>${c.person||'-'}</td><td>${c.ticket_id?'有':'無'}</td><td>${c.charged?'✅':'❌'}</td>
-    <td style="color:var(--text3)">${c.note||'-'}</td>
-    <td><button class="btn btn-danger btn-sm" onclick="deleteConsume('${c.id}')">🗑️</button></td>
-  </tr>`).join('');
-}
-async function deleteConsume(id){if(!confirm('確定刪除？'))return;try{await sb('consumes','DELETE',null,`?id=eq.${id}`);}catch(e){}consumes=consumes.filter(c=>c.id!=id);renderConsumes();toast('🗑️ 已刪除');}
+function renderConsumes(){document.getElementById('consume-tbody').innerHTML=consumes.map(c=>`<tr><td><strong>${c.item_name}</strong></td><td>${c.quantity}</td><td>${c.date||'-'}</td><td>${c.person||'-'}</td><td>${c.ticket_id?'有':'無'}</td><td>${c.charged?'✅':'❌'}</td><td style="color:var(--text3)">${c.note||'-'}</td><td><button class="btn btn-d btn-xs" onclick="delConsume('${c.id}')">🗑️</button></td></tr>`).join('');}
+async function delConsume(id){if(!confirm('確定刪除？'))return;try{await sb('consumes','DELETE',null,`?id=eq.${id}`);}catch(e){}consumes=consumes.filter(c=>c.id!=id);renderConsumes();toast('🗑️ 已刪除');}
 function openBorrowModal(){
-  const borws=invItems.filter(i=>i.item_type==='借出品');
-  document.getElementById('b-item').innerHTML=borws.map(i=>`<option value="${i.id}">${i.name}（${i.quantity}）</option>`).join('');
-  document.getElementById('b-date').value=new Date().toISOString().split('T')[0];document.getElementById('b-person').value='';document.getElementById('b-note').value='';openModal('modal-borrow');
+  const b=invItems.filter(i=>i.item_type==='借出品');
+  document.getElementById('b-item').innerHTML=b.map(i=>`<option value="${i.id}">${i.name}</option>`).join('');
+  document.getElementById('b-date').value=new Date().toISOString().split('T')[0];
+  ['b-person','b-note'].forEach(id=>document.getElementById(id).value='');
+  openMo('mo-borrow');
 }
 async function saveBorrow(){
   const itemId=document.getElementById('b-item').value;const item=invItems.find(i=>i.id==itemId);if(!item){toast('請選擇物品');return;}
   const data={item_id:itemId,item_name:item.name,person:document.getElementById('b-person').value,borrow_date:document.getElementById('b-date').value,return_date:null,note:document.getElementById('b-note').value,status:'借出中',created_at:new Date().toISOString()};
-  try{const r=await sb('borrows','POST',data);if(r&&r[0])borrows.unshift(r[0]);else borrows.unshift({...data,id:Date.now()});}
-  catch(e){borrows.unshift({...data,id:Date.now()});}
-  addInvHistory(item.name,'借出',-1,data.person+'借出');closeModal('modal-borrow');renderBorrows();renderInvHistory();toast('✅ 借出已記錄');
+  try{const rv=await sb('borrows','POST',data);if(rv&&rv[0])borrows.unshift(rv[0]);else borrows.unshift({...data,id:Date.now()});}catch(e){borrows.unshift({...data,id:Date.now()});}
+  addInvH(item.name,'借出',-1,data.person+'借出');closeMo('mo-borrow');renderBorrows();renderInvHist();toast('✅ 借出已記錄');
 }
 async function returnBorrow(id){
   const b=borrows.find(x=>x.id==id);if(!b)return;
-  const today=new Date().toISOString().split('T')[0];
-  try{await sb('borrows','PATCH',{return_date:today,status:'已歸還'},`?id=eq.${id}`);}catch(e){}
-  b.return_date=today;b.status='已歸還';addInvHistory(b.item_name,'歸還',1,b.person+'歸還');renderBorrows();renderInvHistory();toast('✅ 已歸還');
+  const t=new Date().toISOString().split('T')[0];
+  try{await sb('borrows','PATCH',{return_date:t,status:'已歸還'},`?id=eq.${id}`);}catch(e){}
+  b.return_date=t;b.status='已歸還';addInvH(b.item_name,'歸還',1,b.person+'歸還');renderBorrows();renderInvHist();toast('✅ 已歸還');
 }
-function renderBorrows(){
-  document.getElementById('borrow-tbody').innerHTML=borrows.map(b=>`<tr>
-    <td><strong>${b.item_name}</strong></td><td>${b.person||'-'}</td>
-    <td>${b.borrow_date||'-'}</td><td>${b.return_date||'-'}</td>
-    <td><span class="badge ${b.status==='已歸還'?'badge-green':'badge-orange'}">${b.status}</span></td>
-    <td style="color:var(--text3)">${b.note||'-'}</td>
-    <td>${b.status!=='已歸還'?`<button class="btn btn-success btn-sm" onclick="returnBorrow('${b.id}')">歸還</button> `:''}
-    <button class="btn btn-danger btn-sm" onclick="deleteBorrow('${b.id}')">🗑️</button></td>
-  </tr>`).join('');
-}
-async function deleteBorrow(id){if(!confirm('確定刪除？'))return;try{await sb('borrows','DELETE',null,`?id=eq.${id}`);}catch(e){}borrows=borrows.filter(b=>b.id!=id);renderBorrows();toast('🗑️ 已刪除');}
-function addInvHistory(name,action,qty,note){invHistory.unshift({time:new Date().toLocaleString('zh-TW'),name,action,qty,note});renderInvHistory();}
-function renderInvHistory(){
-  document.getElementById('inv-history-tbody').innerHTML=invHistory.map(h=>`<tr>
-    <td style="color:var(--text3);font-size:var(--font-xs)">${h.time}</td>
-    <td><strong>${h.name}</strong></td>
-    <td><span class="badge ${h.action==='歸還'?'badge-green':h.action==='領用'?'badge-orange':'badge-blue'}">${h.action}</span></td>
-    <td style="font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;color:${h.qty>0?'var(--green)':'var(--red)'}">${h.qty>0?'+':''}${h.qty}</td>
-    <td style="color:var(--text3)">${h.note}</td>
-  </tr>`).join('');
-}
+function renderBorrows(){document.getElementById('borrow-tbody').innerHTML=borrows.map(b=>`<tr><td><strong>${b.item_name}</strong></td><td>${b.person||'-'}</td><td>${b.borrow_date||'-'}</td><td>${b.return_date||'-'}</td><td><span class="badge ${b.status==='已歸還'?'bg':'bo'}">${b.status}</span></td><td style="color:var(--text3)">${b.note||'-'}</td><td>${b.status!=='已歸還'?`<button class="btn btn-ok btn-xs" onclick="returnBorrow('${b.id}')">歸還</button> `:''}
+<button class="btn btn-d btn-xs" onclick="delBorrow('${b.id}')">🗑️</button></td></tr>`).join('');}
+async function delBorrow(id){if(!confirm('確定刪除？'))return;try{await sb('borrows','DELETE',null,`?id=eq.${id}`);}catch(e){}borrows=borrows.filter(b=>b.id!=id);renderBorrows();toast('🗑️ 已刪除');}
+function addInvH(name,action,qty,note){invHist.unshift({time:new Date().toLocaleString('zh-TW'),name,action,qty,note});renderInvHist();}
+function renderInvHist(){document.getElementById('hist-tbody').innerHTML=invHist.map(h=>`<tr><td style="color:var(--text3);font-size:12px">${h.time}</td><td><strong>${h.name}</strong></td><td><span class="badge ${h.action==='歸還'?'bg':h.action==='領用'?'bo':'bb'}">${h.action}</span></td><td style="font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;color:${h.qty>0?'var(--green)':'var(--red)'}">${h.qty>0?'+':''}${h.qty}</td><td style="color:var(--text3)">${h.note}</td></tr>`).join('');}
 
-// ===== ACHIEVEMENT =====
+// ══════════════════════════
+// ACHIEVEMENT
+// ══════════════════════════
 function renderAchievement(){
   const tr=repairs.length,dr=repairs.filter(r=>r.status==='已解決').length;
   const tp=projects.length,dp=projects.filter(p=>p.status==='已完成').length;
-  const tm=misc.length,dm=misc.filter(m=>m.status==='已完成').length;
-  const tk=kbItems.length;
+  const tk=kbItems.length,tl=logs.length;
   document.getElementById('ach-content').innerHTML=`
-    <div class="grid-3" style="margin-bottom:16px">
-      <div class="ach-stat"><div class="ach-num" style="color:var(--accent)">${dr}</div><div class="ach-label">✅ 已解決報修</div></div>
-      <div class="ach-stat"><div class="ach-num" style="color:var(--primary)">${tp}</div><div class="ach-label">📋 管理中專案</div></div>
-      <div class="ach-stat"><div class="ach-num" style="color:var(--green)">${tk}</div><div class="ach-label">📚 知識庫條目</div></div>
+    <div class="g3" style="margin-bottom:16px">
+      <div class="card" style="text-align:center"><div class="ach-n" style="color:var(--accent)">${dr}</div><div class="ach-l">✅ 已解決報修</div></div>
+      <div class="card" style="text-align:center"><div class="ach-n" style="color:var(--primary)">${dp}</div><div class="ach-l">📋 已完成專案</div></div>
+      <div class="card" style="text-align:center"><div class="ach-n" style="color:var(--green)">${tk}</div><div class="ach-l">📚 知識庫條目</div></div>
     </div>
     <div class="card" style="margin-bottom:16px">
-      <div class="card-title">📊 完成率分析</div>
-      <div class="ach-bar-row"><div class="ach-bar-label">報修完成率</div><div class="ach-bar-bg"><div class="ach-bar-fill" style="width:${tr?Math.round(dr/tr*100):0}%;background:linear-gradient(90deg,var(--green),#00c9a7)"></div></div><div class="ach-bar-val">${tr?Math.round(dr/tr*100):0}%</div></div>
-      <div class="ach-bar-row"><div class="ach-bar-label">專案完成率</div><div class="ach-bar-bg"><div class="ach-bar-fill" style="width:${tp?Math.round(dp/tp*100):0}%;background:linear-gradient(90deg,var(--primary),var(--purple))"></div></div><div class="ach-bar-val">${tp?Math.round(dp/tp*100):0}%</div></div>
-      <div class="ach-bar-row"><div class="ach-bar-label">雜事完成率</div><div class="ach-bar-bg"><div class="ach-bar-fill" style="width:${tm?Math.round(dm/tm*100):0}%;background:linear-gradient(90deg,var(--yellow),var(--accent))"></div></div><div class="ach-bar-val">${tm?Math.round(dm/tm*100):0}%</div></div>
+      <div class="ct">📊 完成率分析</div>
+      <div class="ab-row"><div class="ab-lbl">報修完成率</div><div class="ab-bg"><div class="ab-fill" style="width:${tr?Math.round(dr/tr*100):0}%;background:linear-gradient(90deg,var(--green),#00c9a7)"></div></div><div class="ab-val">${tr?Math.round(dr/tr*100):0}%</div></div>
+      <div class="ab-row"><div class="ab-lbl">專案完成率</div><div class="ab-bg"><div class="ab-fill" style="width:${tp?Math.round(dp/tp*100):0}%;background:linear-gradient(90deg,var(--primary),var(--purple))"></div></div><div class="ab-val">${tp?Math.round(dp/tp*100):0}%</div></div>
     </div>
-    <div class="grid-2">
+    <div class="g2">
       <div class="card">
-        <div class="card-title">🔧 報修狀態</div>
-        ${['待處理','處理中','擱置','已取消'].map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border)"><span class="badge ${STATUS_COLORS[s]||'badge-gray'}">${s}</span><span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px">${repairs.filter(r=>r.status===s).length}</span></div>`).join('')}
+        <div class="ct">🔧 報修工單狀態</div>
+        ${['待處理','處理中','擱置','已取消','已解決'].map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border)"><span class="badge ${ST_COL[s]||'bgr'}">${s}</span><span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px">${repairs.filter(r=>r.status===s).length}</span></div>`).join('')}
       </div>
       <div class="card">
-        <div class="card-title">📚 知識熟悉度</div>
-        ${['我會','部分會','不會','待確認'].map(s=>{const sm2={'我會':'kb-skill-1','部分會':'kb-skill-2','不會':'kb-skill-3','待確認':'kb-skill-4'};return`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border)"><span class="badge ${sm2[s]}" style="padding:4px 10px;border-radius:999px">${s}</span><span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:22px">${kbItems.filter(k=>k.skill_level===s).length}</span></div>`;}).join('')}
+        <div class="ct">📚 知識熟悉度</div>
+        ${['我會','部分會','不會','待確認'].map(s=>{const sm2={'我會':'ks1','部分會':'ks2','不會':'ks3','待確認':'ks4'};return`<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--border)"><span class="badge ${sm2[s]}" style="padding:3px 9px;border-radius:999px">${s}</span><span style="font-family:'Nunito',sans-serif;font-weight:900;font-size:20px">${kbItems.filter(k=>k.skill_level===s).length}</span></div>`;}).join('')}
       </div>
     </div>`;
 }
 
-// ===== MODALS =====
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});});
+// ══════════════════════════
+// MODAL HELPERS
+// ══════════════════════════
+function openMo(id){document.getElementById(id).classList.add('open');}
+function closeMo(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');}));
 
-// ===== TOAST =====
+// ══════════════════════════
+// TOAST
+// ══════════════════════════
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2500);}
 
-// ===== START =====
+// ══════════════════════════
+// START
+// ══════════════════════════
 init();
 </script>
 </body>
