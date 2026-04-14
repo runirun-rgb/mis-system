@@ -20,12 +20,12 @@
   --radius:16px;--rsm:10px;
   --nav-h:60px;
   
-  --st-blue: #3498db;   /* 待處理 */
-    --st-yellow: #f1c40f; /* 處理中 */
-    --st-purple: #9b59b6; /* 擱置 */
-    --st-green: #2ecc71;  /* 已解決 */
-    --st-red: #e74c3c;    /* 已取消 */
-    --st-project: #5d6d7e; /* 專案預設顏色 */
+  --st-blue: #54b8ff;   /* 待處理 */
+  --st-yellow: #f1a90f; /* 處理中 */
+  --st-purple: #9b59b6; /* 擱置 */
+  --st-green: #2ecc71;  /* 已解決 */
+  --st-red: #e74c3c;    /* 已取消 */
+  --st-project: #5d6d7e; /* 專案預設顏色 */
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
@@ -1065,7 +1065,7 @@ function renderRepairDetail(r){
   <div class="ie-actions">
     <span class="ie-msg" id="ie-msg-${id}"></span>
     <button class="btn btn-d btn-sm" onclick="delRepair('${id}')">刪除</button>
-    <button class="btn btn-p btn-sm" onclick="saveRepairInline('${id}')">儲存修改</button>
+    <button class="btn btn-p btn-sm" onclick="saveRepairInline('${id}')">儲存修改</button><button class="btn" onclick="manualSyncToLog()">手動同步至日誌</button>
   </div>`;
 }
 
@@ -1112,18 +1112,57 @@ function editRepair(id){
   document.getElementById('r-mh').textContent='✏️ 編輯報修工單';
   openMo('mo-repair');
 }
+
 async function saveRepair(){
-  const id=document.getElementById('r-eid').value;
-  const data={type:document.getElementById('r-type').value,status:document.getElementById('r-st').value,description:document.getElementById('r-desc').value.trim(),observe:document.getElementById('r-obs').value,handle:document.getElementById('r-sol').value,items:document.getElementById('r-need').value,result:document.getElementById('r-res').value,improve:document.getElementById('r-imp').value,start_date:document.getElementById('r-sd').value||null,end_date:document.getElementById('r-ed').value||null,start_time:document.getElementById('r-st2').value||null,end_time:document.getElementById('r-et').value||null,time_spent:document.getElementById('r-spent').value||null};
-  if(!data.description){toast('請填寫問題描述');return;}
-  if(['已解決','已取消'].includes(data.status))data.resolved_at=new Date().toISOString();
-  try{
-    if(id){const ex=repairs.find(r=>r.id==id);data.nodes=ex?.nodes||[];await sb('repairs','PATCH',data,`?id=eq.${id}`);repairs=repairs.map(r=>r.id==id?{...r,...data}:r);}
-    else{data.created_at=new Date().toISOString();data.nodes=[];const rv=await sb('repairs','POST',data);if(rv&&rv[0])repairs.unshift(rv[0]);else repairs.unshift({...data,id:Date.now()});}
-  }catch(e){if(id)repairs=repairs.map(r=>r.id==id?{...r,...data}:r);else{data.created_at=new Date().toISOString();data.nodes=[];repairs.unshift({...data,id:Date.now()});}}
-  // auto log if resolved/cancelled
-  if(['已解決','已取消'].includes(data.status))autoLog('報修',data.type,data.description,data);
-  closeMo('mo-repair');renderRepairs();renderCalendar();renderToday();renderWorkLog();toast('✅ 工單已儲存');
+  const id = document.getElementById('r-eid').value;
+  // 1. 先抓取畫面上的最新資料
+  const data = {
+    type: document.getElementById('r-type').value,
+    status: document.getElementById('r-st').value,
+    description: document.getElementById('r-desc').value.trim(),
+    observe: document.getElementById('r-obs').value,
+    handle: document.getElementById('r-sol').value,
+    items: document.getElementById('r-need').value,
+    result: document.getElementById('r-res').value,
+    improve: document.getElementById('r-imp').value,
+    start_date: document.getElementById('r-sd').value||null,
+    end_date: document.getElementById('r-ed').value||null,
+    start_time: document.getElementById('r-st2').value||null,
+    end_time: document.getElementById('r-et').value||null,
+    time_spent: document.getElementById('r-spent').value||null
+  };
+
+  if(!data.description){toast('請填寫問題描述'); return;}
+
+  // --- 重點修改區域：判斷是否要搬運 ---
+  if(['已解決', '已取消'].includes(data.status)){
+      // 如果是在現有工單改狀態，先把原本的 ID 給 data 方便搬運
+      if(id) data.id = id; 
+      
+      // 呼叫我們剛才寫的萬用搬運函數 (isClosing = true)
+      await transferRepairToLog(data, true);
+      
+      closeMo('mo-repair'); 
+      return; // 結束這個 function，後面的一般儲存就不跑了
+  }
+
+  // --- 以下維持你原本的儲存邏輯 (處理待處理、處理中、擱置) ---
+  try {
+    if(id){
+      await sb('repairs','PATCH',data,`?id=eq.${id}`);
+      repairs = repairs.map(r=>r.id==id?{...r,...data}:r);
+    } else {
+      data.created_at = new Date().toISOString();
+      const rv = await sb('repairs','POST',data);
+      if(rv && rv[0]) repairs.unshift(rv[0]);
+    }
+    toast('✅ 工單已儲存');
+  } catch(e) {
+    console.error(e);
+  }
+
+  closeMo('mo-repair');
+  renderRepairs(); renderCalendar(); renderToday();
 }
 
 async function saveRepairInline(id){
@@ -1462,21 +1501,43 @@ async function saveLogInline(id){
   const data={...l,content,log_date:document.getElementById('ld-date-'+id).value,log_time:document.getElementById('ld-time-'+id).value};
   try{await sb('work_logs','PATCH',data,`?id=eq.${id}`);}catch(e){}
   logs=logs.map(x=>x.id==id?{...x,...data}:x);
-  if(st==='back_repair'){
-    // create new repair from log
-    const newR={description:content,type:l.subtype||'其他',status:'待處理',created_at:new Date().toISOString(),nodes:[]};
-    try{const rv=await sb('repairs','POST',newR);if(rv&&rv[0])repairs.unshift(rv[0]);else repairs.unshift({...newR,id:Date.now()});}catch(e){repairs.unshift({...newR,id:Date.now()});}
-    msg.style.color='var(--green)';msg.textContent='↩ 已移回報修工單';
-    setTimeout(()=>{renderRepairs();renderWorkLog();},900);
-  }else if(st==='back_project'){
-    const newP={name:content,status:'進行中',created_at:new Date().toISOString(),stages:[]};
-    try{const rv=await sb('projects','POST',newP);if(rv&&rv[0])projects.unshift(rv[0]);else projects.unshift({...newP,id:Date.now()});}catch(e){projects.unshift({...newP,id:Date.now()});}
-    msg.style.color='var(--green)';msg.textContent='↩ 已移回廠商專案';
-    setTimeout(()=>{renderProjects();renderWorkLog();},900);
-  }else{
-    msg.style.color='var(--green)';msg.textContent='✓ 已儲存';
-    setTimeout(()=>renderWorkLog(),500);
-  }
+if(st==='back_repair'){
+    // 建立新工單，並把日誌中的維修經驗完整帶回
+    const newR = {
+        description: content, 
+        type: l.subtype || '其他', 
+        status: '待處理',
+        observe: l.observe || '', // 帶回之前的觀察
+        handle: l.handle || '',   // 帶回之前的處理方式
+        items: l.items || '',     // 帶回之前用的材料
+        result: l.result || '',   // 帶回之前的結果
+        source_id: l.id,          // 標記這筆工單是從哪則日誌重啟的
+        created_at: new Date().toISOString(),
+        nodes: l.nodes || []      // 帶回之前的進度節點
+    };
+
+    try {
+        const rv = await sb('repairs','POST',newR);
+        if(rv && rv[0]) {
+            repairs.unshift(rv[0]);
+        } else {
+            repairs.unshift({...newR, id: Date.now()});
+        }
+    } catch(e) {
+        repairs.unshift({...newR, id: Date.now()});
+    }
+
+    msg.style.color='var(--green)';
+    msg.textContent='↩ 已重啟為報修工單 (已帶入歷史紀錄)';
+    
+    // gemini修改這裡：增加跳轉頁面
+    setTimeout(() => {
+        showPage('repair'); // 自動切換到工單頁
+        renderRepairs(); 
+        renderWorkLog();
+        renderCalendar(); // 同時更新日曆
+    }, 900);
+}
 }
 async function delLog(id){
   if(!confirm('確定刪除此筆日誌？此操作無法復原。'))return;
@@ -1676,6 +1737,110 @@ function toast(msg){const t=document.createElement('div');t.className='toast';t.
 // START
 // ══════════════════════════
 init();
+
+//gemini核心搬運函數 transferData
+/**
+ * @param {Object} sourceData - 原始資料物件
+ * @param {Boolean} isClosing - 是否要結案 (True: 搬運後刪除工單, False: 僅同步快照)
+ */
+async function transferRepairToLog(sourceData, isClosing = true) {
+    // 1. 準備日誌格式 (對齊你調整後的 SQL 欄位)
+    const logData = {
+        log_date: new Date().toISOString().split('T')[0],
+        log_time: new Date().toTimeString().split(' ')[0],
+        type: sourceData.type,
+        subtype: '工單同步',
+        content: sourceData.description,
+        observe: sourceData.observe,
+        handle: sourceData.handle,
+        items: sourceData.items,
+        result: sourceData.result,
+        improve: sourceData.improve,
+        start_date: sourceData.start_date,
+        end_date: sourceData.end_date,
+        start_time: sourceData.start_time,
+        end_time: sourceData.end_time,
+        time_spent: sourceData.time_spent,
+        nodes: sourceData.nodes,
+        linked_repair_id: sourceData.id,
+        auto: true,
+        created_at: new Date().toISOString()
+    };
+
+    try {
+        // 2. 寫入到 work_logs
+        const rv = await sb('work_logs', 'POST', logData);
+        const newLogId = (rv && rv[0]) ? rv[0].id : null;
+
+        if (isClosing) {
+            // 3. 如果是結案，從 repairs 刪除
+            await sb('repairs', 'DELETE', null, `?id=eq.${sourceData.id}`);
+            repairs = repairs.filter(r => r.id !== sourceData.id);
+            if (newLogId && rv[0]) work_logs.unshift(rv[0]);
+            toast('✅ 工單已結案並歸檔至日誌');
+        } else {
+            // 4. 僅同步，更新工單的 linked_log_id
+            await sb('repairs', 'PATCH', { linked_log_id: newLogId }, `?id=eq.${sourceData.id}`);
+            if (newLogId && rv[0]) work_logs.unshift(rv[0]);
+            toast('📋 已同步進度至今日日誌');
+        }
+
+        // 5. 重新渲染所有介面
+        renderAll(); 
+    } catch (e) {
+        console.error('傳輸失敗:', e);
+        toast('❌ 傳輸過程發生錯誤');
+    }
+}
+//gemini核心搬運函數
+
+//gemini報修編輯彈窗增加同步按鈕JS
+function manualSyncToLog() {
+    const id = document.getElementById('r-eid').value;
+    const currentData = repairs.find(r => r.id == id);
+    if(!currentData) { toast('請先儲存工單後再同步'); return; }
+    transferRepairToLog(currentData, false); // false 代表不刪除工單
+}
+//gemini報修編輯彈窗增加同步按鈕JS
+
+//gemini完整重開工單邏輯JS
+async function reopenAsRepair(logId) {
+    // 1. 找到這筆日誌的資料
+    const logData = work_logs.find(l => l.id == logId);
+    if (!logData) return;
+
+    if (!confirm('確定要參考此日誌並建立新工單嗎？')) return;
+
+    // 2. 準備新工單資料 (把日誌欄位塞回工單)
+    const newRepair = {
+        type: logData.type,
+        status: '待處理',
+        description: `(由日誌重啟) ${logData.content || ''}`,
+        observe: logData.observe || '',
+        handle: logData.handle || '',
+        items: logData.items || '',
+        start_date: new Date().toISOString().split('T')[0], // 設為今天
+        nodes: [],
+        created_at: new Date().toISOString()
+    };
+
+    try {
+        // 3. 寫入 Supabase 的 repairs 表
+        const rv = await sb('repairs', 'POST', newRepair);
+        if (rv && rv[0]) {
+            repairs.unshift(rv[0]); // 更新本地陣列
+            toast('✅ 已成功建立新工單');
+            showPage('repair'); // 跳轉到工單頁面
+            renderAll(); // 重新渲染畫面
+        }
+    } catch (e) {
+        console.error(e);
+        toast('❌ 重開失敗');
+    }
+}
+//重開工單
+
+
 
 //gemini產生的
 function openDayPanel(dateStr) {
