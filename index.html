@@ -1784,46 +1784,51 @@ async function transferRepairToLog(sourceData, isClosing = true) {
         log_time: new Date().toTimeString().split(' ')[0],
         type: sourceData.type,
         subtype: '工單同步', 
-        content: sourceData.description, // 注意：repairs 是 description，日誌是 content
-        observe: sourceData.observe,
-        handle: sourceData.handle,
-        items: sourceData.items,
-        result: sourceData.result,
-        improve: sourceData.improve,
+        content: sourceData.description,
+        observe: sourceData.observe || '',
+        handle: sourceData.handle || '',
+        items: sourceData.items || '',
+        result: sourceData.result || '',
+        improve: sourceData.improve || '',
         start_date: sourceData.start_date,
         end_date: sourceData.end_date,
         start_time: sourceData.start_time,
         end_time: sourceData.end_time,
         time_spent: sourceData.time_spent,
         nodes: sourceData.nodes || [],
-        source_id: sourceData.id,        // 對應你 work_logs 的 source_id
+        source_id: sourceData.id,
         auto: true,
         created_at: new Date().toISOString()
     };
 
     try {
-        // 2. 寫入到 work_logs
-        const rv = await sb('work_logs', 'POST', logData);
-        const newLogId = (rv && rv[0]) ? rv[0].id : null;
+        // 1. 寫入到 work_logs
+        await sb('work_logs', 'POST', logData);
 
         if (isClosing) {
-            // 3. 如果是結案，從 repairs 刪除
+            // 2. 如果是結案，從 repairs 刪除該工單
             await sb('repairs', 'DELETE', null, `?id=eq.${sourceData.id}`);
-            repairs = repairs.filter(r => r.id !== sourceData.id);
-            if (newLogId && rv[0]) work_logs.unshift(rv[0]);
             toast('✅ 工單已結案並歸檔至日誌');
         } else {
-            // 4. 僅同步，更新工單的 linked_log_id
-            await sb('repairs', 'PATCH', { linked_log_id: newLogId }, `?id=eq.${sourceData.id}`);
-            if (newLogId && rv[0]) work_logs.unshift(rv[0]);
+            // 3. 僅同步進度
             toast('📋 已同步進度至今日日誌');
         }
 
-        // 5. 重新渲染所有介面
-        renderAll(); 
+        // 4. 重點：因為你沒有全域陣列，我們直接呼叫你的初始化函數來刷新畫面
+        // 請檢查你的程式碼，一開始進入網頁時載入資料的函數叫什麼？
+        // 通常是 init() 或 loadData()
+        if (typeof init === 'function') {
+            await init(); 
+        } else if (typeof renderAll === 'function') {
+            renderAll();
+        } else {
+            // 如果真的不知道函數名，用這行強制重新整理網頁是最保險的
+            location.reload(); 
+        }
+
     } catch (e) {
         console.error('傳輸失敗:', e);
-        toast('❌ 傳輸過程發生錯誤');
+        toast('❌ 傳輸發生錯誤，請檢查資料庫');
     }
 }
 //gemini核心搬運函數
