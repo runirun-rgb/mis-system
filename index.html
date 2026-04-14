@@ -19,6 +19,13 @@
   --shadow-lg:0 8px 32px rgba(91,110,245,.15);
   --radius:16px;--rsm:10px;
   --nav-h:60px;
+  
+  --st-blue: #3498db;   /* 待處理 */
+    --st-yellow: #f1c40f; /* 處理中 */
+    --st-purple: #9b59b6; /* 擱置 */
+    --st-green: #2ecc71;  /* 已解決 */
+    --st-red: #e74c3c;    /* 已取消 */
+    --st-project: #5d6d7e; /* 專案預設顏色 */
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
@@ -177,11 +184,20 @@ tr:hover td{background:var(--surface2)}
 .dp-title{font-family:'Nunito',sans-serif;font-size:17px;font-weight:900}
 /* timeline */
 .tl-row{display:flex;min-height:42px;border-bottom:1px dashed var(--border)}
-.tl-time{width:52px;flex-shrink:0;font-size:11px;font-weight:700;color:var(--text3);text-align:right;padding-right:10px;border-right:2px solid var(--border);padding-top:5px}
 .tl-slots{flex:1;display:flex;gap:5px;padding:4px 8px;flex-wrap:wrap;align-items:flex-start;min-height:42px}
-.tl-block{padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .15s;line-height:1.5}
-.tl-block:hover{opacity:.75;transform:scale(1.02)}
-.tl-empty{font-size:11px;color:var(--border);padding:6px 0;font-style:italic}
+.tl-time {
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif; /* 使用標準微軟正黑體 */
+    font-size: 13px !important;
+    font-weight: 600;
+}
+.tl-block {
+    font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+    border: none !important;
+    transition: opacity 0.2s;
+}
+.tl-block:hover {
+    opacity: 0.8;
+}.tl-empty{font-size:11px;color:var(--border);padding:6px 0;font-style:italic}
 
 /* popup */
 .cal-popup{position:fixed;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:16px;box-shadow:var(--shadow-lg);z-index:500;min-width:240px;max-width:320px;animation:mIn .15s ease}
@@ -1672,92 +1688,97 @@ init();
 
 //gemini產生的
 function openDayPanel(dateStr) {
-  const panel = document.getElementById('day-panel');
-  const titleEl = document.getElementById('dp-title');
-  const tlContainer = document.getElementById('tl-rows');
-  if (!panel || !tlContainer) return;
+    const panel = document.getElementById('day-panel');
+    const titleEl = document.getElementById('dp-title');
+    const tlContainer = document.getElementById('tl-rows');
+    if (!panel || !tlContainer) return;
 
-  panel.style.display = 'block';
-  if (titleEl) titleEl.textContent = dateStr + ' 詳細排程';
+    panel.style.display = 'block';
+    if (titleEl) titleEl.textContent = dateStr + ' 詳細排程';
 
-  // --- 1. 資料防錯抓取 ---
-  // 確保即使變數暫時空了也不會報錯
-  const allRepairs = typeof repairs !== 'undefined' ? repairs : [];
-  const allProjects = typeof projects !== 'undefined' ? projects : [];
+    // 狀態顏色對照表
+    const statusColorMap = {
+        '待處理': 'var(--st-blue)',
+        '處理中': 'var(--st-yellow)',
+        '擱置': 'var(--st-purple)',
+        '已解決': 'var(--st-green)',
+        '已取消': 'var(--st-red)'
+    };
 
-  const dayRepairs = allRepairs.filter(r => 
-    (r.start_date === dateStr) || (r.created_at && r.created_at.startsWith(dateStr))
-  );
+    const allRepairs = typeof repairs !== 'undefined' ? repairs : [];
+    const allProjects = typeof projects !== 'undefined' ? projects : [];
 
-  let dayStages = [];
-  allProjects.forEach(p => {
-    if (p.stages) {
-      p.stages.forEach((st, idx) => {
-        if (st.date === dateStr) {
-          dayStages.push({ ...st, projectName: p.name, projectId: p.id, stageIdx: idx });
+    const dayRepairs = allRepairs.filter(r => 
+        (r.start_date === dateStr) || (r.created_at && r.created_at.startsWith(dateStr))
+    );
+
+    let dayStages = [];
+    allProjects.forEach(p => {
+        if (p.stages) {
+            p.stages.forEach(st => {
+                if (st.date === dateStr) {
+                    dayStages.push({ ...st, projectName: p.name });
+                }
+            });
         }
-      });
+    });
+
+    const toMin = (t) => {
+        if (!t) return null;
+        const timePart = t.includes('T') ? t.split('T')[1].substring(0, 5) : t.substring(0, 5);
+        const [h, m] = timePart.split(':').map(Number);
+        return isNaN(h) ? null : (h * 60 + m);
+    };
+
+    let html = '';
+    for (let min = 8 * 60; min <= 19 * 60; min += 30) {
+        const h = Math.floor(min / 60);
+        const m = min % 60;
+        const timeLabel = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+        const slotStart = min;
+        const slotEnd = min + 30;
+
+        let blocksHtml = '';
+
+        // A. 專案節點 (預設灰色/深藍)
+        dayStages.forEach(st => {
+            const stMin = toMin(st.time) || (8 * 60);
+            if (stMin >= slotStart && stMin < slotEnd) {
+                blocksHtml += `
+                    <div class="tl-block" style="background:var(--st-project); color:white; margin-bottom:2px; padding:3px 8px; border-radius:4px; font-size:12px; cursor:pointer;" onclick="showPage('project')">
+                        📌 ${st.projectName}-${st.title}
+                    </div>`;
+            }
+        });
+
+        // B. 報修工單 (根據狀態換色)
+        dayRepairs.forEach(r => {
+            const start = toMin(r.start_time) || toMin(r.created_at) || (8 * 60);
+            const end = toMin(r.end_time) || (start + 60); 
+            
+            // 根據工單狀態獲取顏色，若無狀態則預設藍色
+            const bgColor = statusColorMap[r.status] || 'var(--st-blue)';
+
+            if (start < slotEnd && end > slotStart) {
+                blocksHtml += `
+                    <div class="tl-block" style="background:${bgColor}; color:white; margin-bottom:2px; padding:3px 8px; border-radius:4px; font-size:12px; cursor:pointer;" 
+                         onclick="showPage('repair'); if(document.getElementById('r-srch')) { document.getElementById('r-srch').value='${r.description}'; renderRepairs(); }">
+                        🔧 ${r.description} (${r.status})
+                    </div>`;
+            }
+        });
+
+        if (!blocksHtml) blocksHtml = '<div style="color:var(--text3); opacity:0.2">-</div>';
+
+        html += `
+            <div class="tl-row" style="display:flex; border-bottom:1px solid var(--border); padding:6px 0; min-height:35px; align-items: center;">
+                <div class="tl-time" style="width:55px;">${timeLabel}</div>
+                <div class="tl-slots" style="flex:1; padding-left:10px; border-left:2px solid var(--border);">${blocksHtml}</div>
+            </div>`;
     }
-  });
-
-  // 時間轉分鐘的輔助函式 (強化版)
-  const toMin = (t) => {
-    if (!t) return null;
-    // 處理格式可能是 "2026-04-14T10:00" 或 "10:00"
-    const timePart = t.includes('T') ? t.split('T')[1].substring(0, 5) : t.substring(0, 5);
-    const [h, m] = timePart.split(':').map(Number);
-    return isNaN(h) ? null : (h * 60 + m);
-  };
-
-  let html = '';
-  // --- 2. 繪製 30 分鐘一格的時間軸 ---
-  for (let min = 8 * 60; min <= 19 * 60; min += 30) {
-    const h = Math.floor(min / 60);
-    const m = min % 60;
-    const timeLabel = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-    const slotStart = min;
-    const slotEnd = min + 30;
-
-    let blocksHtml = '';
-
-    // A. 專案節點
-    dayStages.forEach(st => {
-      const stMin = toMin(st.time) || (8 * 60);
-      if (stMin >= slotStart && stMin < slotEnd) {
-        blocksHtml += `
-          <div class="tl-block" style="background:var(--primary); color:white; margin-bottom:2px; padding:3px 8px; border-radius:4px; font-size:12px; cursor:pointer;" 
-               onclick="showPage('project'); toast('切換至專案頁面')">
-            📌 ${st.projectName}-${st.title}
-          </div>`;
-      }
-    });
-
-    // B. 報修工單 (跨格邏輯)
-    dayRepairs.forEach(r => {
-      // 優先用 start_time，沒有就用 created_at 的時間，再沒有就預設 08:00
-      const start = toMin(r.start_time) || toMin(r.created_at) || (8 * 60);
-      const end = toMin(r.end_time) || (start + 60); 
-
-      if (start < slotEnd && end > slotStart) {
-        blocksHtml += `
-          <div class="tl-block" style="background:var(--accent); color:white; margin-bottom:2px; padding:3px 8px; border-radius:4px; font-size:12px; cursor:pointer;" 
-               onclick="showPage('repair'); if(document.getElementById('r-srch')) { document.getElementById('r-srch').value='${r.description}'; renderRepairs(); }">
-            🔧 ${r.description}
-          </div>`;
-      }
-    });
-
-    if (!blocksHtml) blocksHtml = '<div style="color:var(--text3); opacity:0.2">-</div>';
-
-    html += `
-      <div class="tl-row" style="display:flex; border-bottom:1px solid var(--border); padding:4px 0; min-height:30px;">
-        <div class="tl-time" style="width:55px; font-size:11px; color:var(--text2); font-family:monospace;">${timeLabel}</div>
-        <div class="tl-slots" style="flex:1; padding-left:8px; border-left:2px solid var(--border);">${blocksHtml}</div>
-      </div>`;
-  }
-  
-  tlContainer.innerHTML = html;
+    tlContainer.innerHTML = html;
 }
+//gemini提供
 </script>
 </body>
 </html>
