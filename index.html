@@ -548,7 +548,11 @@ textarea.ie-val{resize:vertical;min-height:60px}
   <div class="fg"><label class="fl">結果</label><textarea class="fc" id="r-res" rows="2"></textarea></div>
   <div class="fg"><label class="fl">待改進</label><textarea class="fc" id="r-imp" rows="2"></textarea></div>
   <div class="fg"><label class="fl">花費時間（分鐘）</label><input type="number" class="fc" id="r-spent" placeholder="ex: 30"></div>
-  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-repair')">取消</button><button class="btn btn-p" onclick="saveRepair()">儲存</button>  <button id="sync-btn" class="btn" style="display:none; background:var(--secondary);" onclick="manualSyncToLog()">手動同步至日誌</button>
+ <div class="mf">
+    <button class="btn btn-g" onclick="closeMo('mo-repair')">取消</button>
+    <button class="btn btn-p" onclick="saveRepair()">儲存修改</button>
+    <button id="sync-btn" class="btn btn-b" style="display:none;" onclick="manualSyncToLog()">手動同步至日誌</button>
+ </div>
 </div>
 </div></div>
 
@@ -1234,16 +1238,23 @@ async function delRNode(rid,idx){
 
 //gemini防止沒存檔就同步
 async function manualSyncToLog() {
-    // 1. 同步前強制先跑一次儲存邏輯 (確保資料庫裡是最新的)
-    await saveRepair(); 
-    
-    // 2. 儲存完後，再從最新的 repairs 陣列抓資料來搬運
+    console.log("開始手動同步...");
     const id = document.getElementById('r-eid').value;
+    console.log("當前編輯的 ID:", id);
+
+    // 從本地陣列找到這筆工單
     const currentData = repairs.find(r => r.id == id);
     
-    if(currentData) {
-        await transferRepairToLog(currentData, false); // false = 只同步不刪除
+    if(!currentData) {
+        console.error("在 repairs 陣列中找不到 ID 為 " + id + " 的資料");
+        toast('❌ 找不到工單資料，請先儲存後再試');
+        return;
     }
+
+    console.log("準備搬運的資料:", currentData);
+    
+    // 呼叫搬運函數
+    await transferRepairToLog(currentData, false); 
 }
 //防止沒存檔就同步
 
@@ -1768,13 +1779,12 @@ init();
  * @param {Boolean} isClosing - 是否要結案 (True: 搬運後刪除工單, False: 僅同步快照)
  */
 async function transferRepairToLog(sourceData, isClosing = true) {
-    // 1. 準備日誌格式 (對齊你調整後的 SQL 欄位)
     const logData = {
         log_date: new Date().toISOString().split('T')[0],
         log_time: new Date().toTimeString().split(' ')[0],
         type: sourceData.type,
-        subtype: '工單同步',
-        content: sourceData.description,
+        subtype: '工單同步', 
+        content: sourceData.description, // 注意：repairs 是 description，日誌是 content
         observe: sourceData.observe,
         handle: sourceData.handle,
         items: sourceData.items,
@@ -1785,8 +1795,8 @@ async function transferRepairToLog(sourceData, isClosing = true) {
         start_time: sourceData.start_time,
         end_time: sourceData.end_time,
         time_spent: sourceData.time_spent,
-        nodes: sourceData.nodes,
-        linked_repair_id: sourceData.id,
+        nodes: sourceData.nodes || [],
+        source_id: sourceData.id,        // 對應你 work_logs 的 source_id
         auto: true,
         created_at: new Date().toISOString()
     };
