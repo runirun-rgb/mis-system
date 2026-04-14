@@ -1671,73 +1671,85 @@ function toast(msg){const t=document.createElement('div');t.className='toast';t.
 init();
 
 //gemini產生的
-// 針對你的 HTML 結構完全對接的版本
 function openDayPanel(dateStr) {
     const panel = document.getElementById('day-panel');
-    const titleEl = document.getElementById('dp-title'); // 對接你的 dp-title
-    const tlContainer = document.getElementById('tl-rows'); // 對接你的 tl-rows
-
+    const titleEl = document.getElementById('dp-title');
+    const tlContainer = document.getElementById('tl-rows');
     if (!panel || !tlContainer) return;
 
-    // 1. 顯示面板
     panel.style.display = 'block';
-    
-    // 2. 更新標題 (顯示日期)
-    if (titleEl) titleEl.textContent = dateStr + ' 排程時間軸';
+    if (titleEl) titleEl.textContent = dateStr + ' 詳細排程';
 
-    // 3. 準備當天資料
-    // 報修資料
-    const dayRepairs = repairs.filter(r => r.created_at && r.created_at.startsWith(dateStr));
-    
-    // 專案節點資料
+    // --- 資料準備 ---
+    const dayRepairs = repairs.filter(r => r.start_date === dateStr || (r.created_at && r.created_at.startsWith(dateStr)));
     let dayStages = [];
     projects.forEach(p => {
         if (p.stages) {
-            p.stages.forEach(st => {
+            p.stages.forEach((st, idx) => {
                 if (st.date === dateStr) {
-                    dayStages.push({ ...st, projectName: p.name });
+                    dayStages.push({ ...st, projectName: p.name, projectId: p.id, stageIdx: idx });
                 }
             });
         }
     });
 
-    // 4. 重新繪製時間軸 (08:00 - 19:00)
+    // 輔助函式：將 "HH:mm" 轉為分鐘數
+    const toMin = (t) => {
+        if (!t) return null;
+        const [h, m] = t.split(':').map(Number);
+        return h * 60 + m;
+    };
+
     let html = '';
-    for (let h = 8; h <= 19; h++) {
-        const timeStr = h.toString().padStart(2, '0') + ':00';
+    // --- 繪製時間軸 (從 08:00 到 19:00，每 30 分鐘一格) ---
+    for (let min = 8 * 60; min <= 19 * 60; min += 30) {
+        const h = Math.floor(min / 60);
+        const m = min % 60;
+        const timeLabel = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
         
-        // 過濾出該小時的節點
-        const currentStages = dayStages.filter(st => {
-            const stH = st.time ? st.time.split(':')[0] : "08";
-            return parseInt(stH) === h;
-        });
+        const slotStart = min;
+        const slotEnd = min + 30;
 
-        // 報修預設放 08:00
-        const currentRepairs = (h === 8) ? dayRepairs : [];
-
-        // 組裝內容
         let blocksHtml = '';
-        currentStages.forEach(st => {
-            blocksHtml += `<div class="tl-block" style="background:var(--primary); color:white; padding:4px 8px; border-radius:4px; margin-bottom:4px; font-size:13px;">[${st.projectName}] ${st.title}</div>`;
-        });
-        currentRepairs.forEach(r => {
-            blocksHtml += `<div class="tl-block" style="background:var(--accent); color:white; padding:4px 8px; border-radius:4px; margin-bottom:4px; font-size:13px;">🔧 ${r.description}</div>`;
+
+        // 1. 判斷專案節點 (以單一時間點為準，若沒填時間預設 08:00)
+        dayStages.forEach(st => {
+            const stMin = toMin(st.time) || (8 * 60);
+            if (stMin >= slotStart && stMin < slotEnd) {
+                blocksHtml += `
+                    <div class="tl-block" style="background:var(--primary); color:white; cursor:pointer;" 
+                         onclick="showPage('project'); toast('正在跳轉專案...');">
+                        [專案] ${st.projectName}-${st.title}
+                    </div>`;
+            }
         });
 
-        if (!blocksHtml) blocksHtml = '<div style="color:var(--text3); font-size:12px; opacity:0.5">--</div>';
+        // 2. 判斷報修工單 (判斷 8:20~10:10 是否重疊到此格子)
+        dayRepairs.forEach(r => {
+            const start = toMin(r.start_time) || toMin(r.created_at?.substring(11, 16)) || (8 * 60);
+            const end = toMin(r.end_time) || (start + 60); // 若無結束時間，預設顯示一小時
 
-        // 這裡就是你原本的時間表結構
+            // 重疊邏輯：工單開始早於格子結束，且工單結束晚於格子開始
+            if (start < slotEnd && end > slotStart) {
+                blocksHtml += `
+                    <div class="tl-block" style="background:var(--accent); color:white; cursor:pointer;" 
+                         onclick="showPage('repair'); document.getElementById('r-srch').value='${r.description}'; renderRepairs();">
+                        🔧 ${r.description}
+                    </div>`;
+            }
+        });
+
+        if (!blocksHtml) blocksHtml = '<div style="color:var(--text3); opacity:0.3">-</div>';
+
         html += `
-            <div class="tl-row" style="display:flex; border-bottom:1px solid var(--border); align-items:flex-start; padding:8px 0;">
-                <div class="tl-time" style="width:60px; font-weight:bold; color:var(--primary);">${timeStr}</div>
+            <div class="tl-row" style="display:flex; border-bottom:1px solid var(--border); padding:5px 0;">
+                <div class="tl-time" style="width:50px; font-size:12px; color:var(--text2);">${timeLabel}</div>
                 <div class="tl-slots" style="flex:1; padding-left:10px;">${blocksHtml}</div>
-            </div>
-        `;
+            </div>`;
     }
     
     tlContainer.innerHTML = html;
 }
-
 </script>
 </body>
 </html>
