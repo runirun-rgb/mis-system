@@ -1671,20 +1671,25 @@ function toast(msg){const t=document.createElement('div');t.className='toast';t.
 init();
 
 //gemini產生的
-// 補上消失的面板函數
+// 針對你的 HTML 結構完全對接的版本
 function openDayPanel(dateStr) {
     const panel = document.getElementById('day-panel');
-    if (!panel) return;
+    const titleEl = document.getElementById('dp-title'); // 對接你的 dp-title
+    const tlContainer = document.getElementById('tl-rows'); // 對接你的 tl-rows
+
+    if (!panel || !tlContainer) return;
 
     // 1. 顯示面板
     panel.style.display = 'block';
     
-    // 2. 更新標題日期
-    document.getElementById('day-panel-title').textContent = dateStr + ' 排程詳情';
+    // 2. 更新標題 (顯示日期)
+    if (titleEl) titleEl.textContent = dateStr + ' 排程時間軸';
 
-    // 3. 抓取當天的資料 (報修 & 專案節點)
+    // 3. 準備當天資料
+    // 報修資料
     const dayRepairs = repairs.filter(r => r.created_at && r.created_at.startsWith(dateStr));
     
+    // 專案節點資料
     let dayStages = [];
     projects.forEach(p => {
         if (p.stages) {
@@ -1696,49 +1701,42 @@ function openDayPanel(dateStr) {
         }
     });
 
-    // 4. 渲染排程表 (Timeline)
-    const tlContainer = document.getElementById('tl-rows');
-    if (!tlContainer) return;
-    
-    tlContainer.innerHTML = ''; // 清空舊的
-
-    // 生成 08:00 - 19:00 的格子
+    // 4. 重新繪製時間軸 (08:00 - 19:00)
+    let html = '';
     for (let h = 8; h <= 19; h++) {
         const timeStr = h.toString().padStart(2, '0') + ':00';
         
-        // 檢查這小時有沒有專案節點
+        // 過濾出該小時的節點
         const currentStages = dayStages.filter(st => {
-            const stH = st.time ? st.time.split(':')[0] : "08"; // 沒填時間預設 08
+            const stH = st.time ? st.time.split(':')[0] : "08";
             return parseInt(stH) === h;
         });
 
-        // 檢查這小時有沒有報修工單 (假設報修預設在 08:00 顯示)
+        // 報修預設放 08:00
         const currentRepairs = (h === 8) ? dayRepairs : [];
 
+        // 組裝內容
         let blocksHtml = '';
         currentStages.forEach(st => {
-            blocksHtml += `<div class="tl-block cp-pn">[${st.projectName}] ${st.title}</div>`;
+            blocksHtml += `<div class="tl-block" style="background:var(--primary); color:white; padding:4px 8px; border-radius:4px; margin-bottom:4px; font-size:13px;">[${st.projectName}] ${st.title}</div>`;
         });
         currentRepairs.forEach(r => {
-            blocksHtml += `<div class="tl-block cp-r">🔧 ${r.description}</div>`;
+            blocksHtml += `<div class="tl-block" style="background:var(--accent); color:white; padding:4px 8px; border-radius:4px; margin-bottom:4px; font-size:13px;">🔧 ${r.description}</div>`;
         });
 
-        if (!blocksHtml) blocksHtml = '<div class="tl-empty">--</div>';
+        if (!blocksHtml) blocksHtml = '<div style="color:var(--text3); font-size:12px; opacity:0.5">--</div>';
 
-        tlContainer.innerHTML += `
-            <div class="tl-row">
-                <div class="tl-time">${timeStr}</div>
-                <div class="tl-slots">${blocksHtml}</div>
+        // 這裡就是你原本的時間表結構
+        html += `
+            <div class="tl-row" style="display:flex; border-bottom:1px solid var(--border); align-items:flex-start; padding:8px 0;">
+                <div class="tl-time" style="width:60px; font-weight:bold; color:var(--primary);">${timeStr}</div>
+                <div class="tl-slots" style="flex:1; padding-left:10px;">${blocksHtml}</div>
             </div>
         `;
     }
+    
+    tlContainer.innerHTML = html;
 }
-
-// 關閉面板的函數
-function closeDayPanel() {
-    document.getElementById('day-panel').style.display = 'none';
-}
-
 
 </script>
 </body>
