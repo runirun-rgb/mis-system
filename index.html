@@ -548,7 +548,8 @@ textarea.ie-val{resize:vertical;min-height:60px}
   <div class="fg"><label class="fl">結果</label><textarea class="fc" id="r-res" rows="2"></textarea></div>
   <div class="fg"><label class="fl">待改進</label><textarea class="fc" id="r-imp" rows="2"></textarea></div>
   <div class="fg"><label class="fl">花費時間（分鐘）</label><input type="number" class="fc" id="r-spent" placeholder="ex: 30"></div>
-  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-repair')">取消</button><button class="btn btn-p" onclick="saveRepair()">儲存</button></div>
+  <div class="mf"><button class="btn btn-g" onclick="closeMo('mo-repair')">取消</button><button class="btn btn-p" onclick="saveRepair()">儲存</button>  <button id="sync-btn" class="btn" style="display:none; background:var(--secondary);" onclick="manualSyncToLog()">手動同步至日誌</button>
+</div>
 </div></div>
 
 <!-- Repair Node -->
@@ -1065,7 +1066,7 @@ function renderRepairDetail(r){
   <div class="ie-actions">
     <span class="ie-msg" id="ie-msg-${id}"></span>
     <button class="btn btn-d btn-sm" onclick="delRepair('${id}')">刪除</button>
-    <button class="btn btn-p btn-sm" onclick="saveRepairInline('${id}')">儲存修改</button><button class="btn" onclick="manualSyncToLog()">手動同步至日誌</button>
+    <button class="btn btn-p btn-sm" onclick="saveRepairInline('${id}')">儲存修改</button>
   </div>`;
 }
 
@@ -1088,11 +1089,16 @@ function toggleTk(id,headEl){
 
 function openRepairModal(){
   document.getElementById('r-eid').value='';
-  ['r-desc','r-obs','r-sol','r-need','r-res','r-imp','r-sd','r-ed','r-st2','r-et','r-spent'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  ['r-desc','r-obs','r-sol','r-need','r-res','r-imp','r-sd','r-ed','r-st2','r-et','r-spent'].forEach(id=>{
+      const e=document.getElementById(id); if(e)e.value='';
+  });
   document.getElementById('r-st').value='待處理';
   document.getElementById('r-mh').textContent='🔧 新增報修工單';
+  // 新增：隱藏同步按鈕
+  if(document.getElementById('sync-btn')) document.getElementById('sync-btn').style.display = 'none';
   openMo('mo-repair');
 }
+
 function editRepair(id){
   const r=repairs.find(x=>x.id==id);if(!r)return;
   document.getElementById('r-eid').value=id;
@@ -1109,6 +1115,8 @@ function editRepair(id){
   document.getElementById('r-st2').value=r.start_time||'';
   document.getElementById('r-et').value=r.end_time||'';
   document.getElementById('r-spent').value=r.time_spent||'';
+  // 新增：顯示同步按鈕
+  if(document.getElementById('sync-btn')) document.getElementById('sync-btn').style.display = 'inline-block';
   document.getElementById('r-mh').textContent='✏️ 編輯報修工單';
   openMo('mo-repair');
 }
@@ -1223,6 +1231,22 @@ async function delRNode(rid,idx){
   try{await sb('repairs','PATCH',{nodes:r.nodes},`?id=eq.${rid}`);}catch(e){}
   renderRepairs();toast('🗑️ 節點已刪除');
 }
+
+//gemini防止沒存檔就同步
+async function manualSyncToLog() {
+    // 1. 同步前強制先跑一次儲存邏輯 (確保資料庫裡是最新的)
+    await saveRepair(); 
+    
+    // 2. 儲存完後，再從最新的 repairs 陣列抓資料來搬運
+    const id = document.getElementById('r-eid').value;
+    const currentData = repairs.find(r => r.id == id);
+    
+    if(currentData) {
+        await transferRepairToLog(currentData, false); // false = 只同步不刪除
+    }
+}
+//防止沒存檔就同步
+
 
 // ══════════════════════════
 // PROJECT
