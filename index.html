@@ -1669,6 +1669,77 @@ function toast(msg){const t=document.createElement('div');t.className='toast';t.
 // START
 // ══════════════════════════
 init();
+
+//gemini產生的
+// 補上消失的面板函數
+function openDayPanel(dateStr) {
+    const panel = document.getElementById('day-panel');
+    if (!panel) return;
+
+    // 1. 顯示面板
+    panel.style.display = 'block';
+    
+    // 2. 更新標題日期
+    document.getElementById('day-panel-title').textContent = dateStr + ' 排程詳情';
+
+    // 3. 抓取當天的資料 (報修 & 專案節點)
+    const dayRepairs = repairs.filter(r => r.created_at && r.created_at.startsWith(dateStr));
+    
+    let dayStages = [];
+    projects.forEach(p => {
+        if (p.stages) {
+            p.stages.forEach(st => {
+                if (st.date === dateStr) {
+                    dayStages.push({ ...st, projectName: p.name });
+                }
+            });
+        }
+    });
+
+    // 4. 渲染排程表 (Timeline)
+    const tlContainer = document.getElementById('tl-rows');
+    if (!tlContainer) return;
+    
+    tlContainer.innerHTML = ''; // 清空舊的
+
+    // 生成 08:00 - 19:00 的格子
+    for (let h = 8; h <= 19; h++) {
+        const timeStr = h.toString().padStart(2, '0') + ':00';
+        
+        // 檢查這小時有沒有專案節點
+        const currentStages = dayStages.filter(st => {
+            const stH = st.time ? st.time.split(':')[0] : "08"; // 沒填時間預設 08
+            return parseInt(stH) === h;
+        });
+
+        // 檢查這小時有沒有報修工單 (假設報修預設在 08:00 顯示)
+        const currentRepairs = (h === 8) ? dayRepairs : [];
+
+        let blocksHtml = '';
+        currentStages.forEach(st => {
+            blocksHtml += `<div class="tl-block cp-pn">[${st.projectName}] ${st.title}</div>`;
+        });
+        currentRepairs.forEach(r => {
+            blocksHtml += `<div class="tl-block cp-r">🔧 ${r.description}</div>`;
+        });
+
+        if (!blocksHtml) blocksHtml = '<div class="tl-empty">--</div>';
+
+        tlContainer.innerHTML += `
+            <div class="tl-row">
+                <div class="tl-time">${timeStr}</div>
+                <div class="tl-slots">${blocksHtml}</div>
+            </div>
+        `;
+    }
+}
+
+// 關閉面板的函數
+function closeDayPanel() {
+    document.getElementById('day-panel').style.display = 'none';
+}
+
+
 </script>
 </body>
 </html>
