@@ -1672,83 +1672,91 @@ init();
 
 //gemini產生的
 function openDayPanel(dateStr) {
-    const panel = document.getElementById('day-panel');
-    const titleEl = document.getElementById('dp-title');
-    const tlContainer = document.getElementById('tl-rows');
-    if (!panel || !tlContainer) return;
+  const panel = document.getElementById('day-panel');
+  const titleEl = document.getElementById('dp-title');
+  const tlContainer = document.getElementById('tl-rows');
+  if (!panel || !tlContainer) return;
 
-    panel.style.display = 'block';
-    if (titleEl) titleEl.textContent = dateStr + ' 詳細排程';
+  panel.style.display = 'block';
+  if (titleEl) titleEl.textContent = dateStr + ' 詳細排程';
 
-    // --- 資料準備 ---
-    const dayRepairs = repairs.filter(r => r.start_date === dateStr || (r.created_at && r.created_at.startsWith(dateStr)));
-    let dayStages = [];
-    projects.forEach(p => {
-        if (p.stages) {
-            p.stages.forEach((st, idx) => {
-                if (st.date === dateStr) {
-                    dayStages.push({ ...st, projectName: p.name, projectId: p.id, stageIdx: idx });
-                }
-            });
+  // --- 1. 資料防錯抓取 ---
+  // 確保即使變數暫時空了也不會報錯
+  const allRepairs = typeof repairs !== 'undefined' ? repairs : [];
+  const allProjects = typeof projects !== 'undefined' ? projects : [];
+
+  const dayRepairs = allRepairs.filter(r => 
+    (r.start_date === dateStr) || (r.created_at && r.created_at.startsWith(dateStr))
+  );
+
+  let dayStages = [];
+  allProjects.forEach(p => {
+    if (p.stages) {
+      p.stages.forEach((st, idx) => {
+        if (st.date === dateStr) {
+          dayStages.push({ ...st, projectName: p.name, projectId: p.id, stageIdx: idx });
         }
+      });
+    }
+  });
+
+  // 時間轉分鐘的輔助函式 (強化版)
+  const toMin = (t) => {
+    if (!t) return null;
+    // 處理格式可能是 "2026-04-14T10:00" 或 "10:00"
+    const timePart = t.includes('T') ? t.split('T')[1].substring(0, 5) : t.substring(0, 5);
+    const [h, m] = timePart.split(':').map(Number);
+    return isNaN(h) ? null : (h * 60 + m);
+  };
+
+  let html = '';
+  // --- 2. 繪製 30 分鐘一格的時間軸 ---
+  for (let min = 8 * 60; min <= 19 * 60; min += 30) {
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    const timeLabel = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+    const slotStart = min;
+    const slotEnd = min + 30;
+
+    let blocksHtml = '';
+
+    // A. 專案節點
+    dayStages.forEach(st => {
+      const stMin = toMin(st.time) || (8 * 60);
+      if (stMin >= slotStart && stMin < slotEnd) {
+        blocksHtml += `
+          <div class="tl-block" style="background:var(--primary); color:white; margin-bottom:2px; padding:3px 8px; border-radius:4px; font-size:12px; cursor:pointer;" 
+               onclick="showPage('project'); toast('切換至專案頁面')">
+            📌 ${st.projectName}-${st.title}
+          </div>`;
+      }
     });
 
-    // 輔助函式：將 "HH:mm" 轉為分鐘數
-    const toMin = (t) => {
-        if (!t) return null;
-        const [h, m] = t.split(':').map(Number);
-        return h * 60 + m;
-    };
+    // B. 報修工單 (跨格邏輯)
+    dayRepairs.forEach(r => {
+      // 優先用 start_time，沒有就用 created_at 的時間，再沒有就預設 08:00
+      const start = toMin(r.start_time) || toMin(r.created_at) || (8 * 60);
+      const end = toMin(r.end_time) || (start + 60); 
 
-    let html = '';
-    // --- 繪製時間軸 (從 08:00 到 19:00，每 30 分鐘一格) ---
-    for (let min = 8 * 60; min <= 19 * 60; min += 30) {
-        const h = Math.floor(min / 60);
-        const m = min % 60;
-        const timeLabel = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-        
-        const slotStart = min;
-        const slotEnd = min + 30;
+      if (start < slotEnd && end > slotStart) {
+        blocksHtml += `
+          <div class="tl-block" style="background:var(--accent); color:white; margin-bottom:2px; padding:3px 8px; border-radius:4px; font-size:12px; cursor:pointer;" 
+               onclick="showPage('repair'); if(document.getElementById('r-srch')) { document.getElementById('r-srch').value='${r.description}'; renderRepairs(); }">
+            🔧 ${r.description}
+          </div>`;
+      }
+    });
 
-        let blocksHtml = '';
+    if (!blocksHtml) blocksHtml = '<div style="color:var(--text3); opacity:0.2">-</div>';
 
-        // 1. 判斷專案節點 (以單一時間點為準，若沒填時間預設 08:00)
-        dayStages.forEach(st => {
-            const stMin = toMin(st.time) || (8 * 60);
-            if (stMin >= slotStart && stMin < slotEnd) {
-                blocksHtml += `
-                    <div class="tl-block" style="background:var(--primary); color:white; cursor:pointer;" 
-                         onclick="showPage('project'); toast('正在跳轉專案...');">
-                        [專案] ${st.projectName}-${st.title}
-                    </div>`;
-            }
-        });
-
-        // 2. 判斷報修工單 (判斷 8:20~10:10 是否重疊到此格子)
-        dayRepairs.forEach(r => {
-            const start = toMin(r.start_time) || toMin(r.created_at?.substring(11, 16)) || (8 * 60);
-            const end = toMin(r.end_time) || (start + 60); // 若無結束時間，預設顯示一小時
-
-            // 重疊邏輯：工單開始早於格子結束，且工單結束晚於格子開始
-            if (start < slotEnd && end > slotStart) {
-                blocksHtml += `
-                    <div class="tl-block" style="background:var(--accent); color:white; cursor:pointer;" 
-                         onclick="showPage('repair'); document.getElementById('r-srch').value='${r.description}'; renderRepairs();">
-                        🔧 ${r.description}
-                    </div>`;
-            }
-        });
-
-        if (!blocksHtml) blocksHtml = '<div style="color:var(--text3); opacity:0.3">-</div>';
-
-        html += `
-            <div class="tl-row" style="display:flex; border-bottom:1px solid var(--border); padding:5px 0;">
-                <div class="tl-time" style="width:50px; font-size:12px; color:var(--text2);">${timeLabel}</div>
-                <div class="tl-slots" style="flex:1; padding-left:10px;">${blocksHtml}</div>
-            </div>`;
-    }
-    
-    tlContainer.innerHTML = html;
+    html += `
+      <div class="tl-row" style="display:flex; border-bottom:1px solid var(--border); padding:4px 0; min-height:30px;">
+        <div class="tl-time" style="width:55px; font-size:11px; color:var(--text2); font-family:monospace;">${timeLabel}</div>
+        <div class="tl-slots" style="flex:1; padding-left:8px; border-left:2px solid var(--border);">${blocksHtml}</div>
+      </div>`;
+  }
+  
+  tlContainer.innerHTML = html;
 }
 </script>
 </body>
