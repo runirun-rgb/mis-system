@@ -1434,17 +1434,18 @@ function renderWorkLog(){
   const days=['日','一','二','三','四','五','六'];
   const typeC={報修:'var(--accent)',專案:'var(--primary)',手動:'var(--text3)'};
 
-  el.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden">
+el.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden">
     ${Object.entries(byDay).map(([date,entries])=>{
       const ts=date!=='未知'?new Date(date):null;
       const dLabel=ts?`${ts.getFullYear()}年${ts.getMonth()+1}月${ts.getDate()}日（週${days[ts.getDay()]}）`:'未知日期';
-      return`<div class="wl-group">
+      
+      return `<div class="wl-group">
         <div class="wl-dh">${dLabel}<span class="wl-dh-cnt">${entries.length} 筆</span></div>
         ${entries.map(l=>{
           const isStar=starred['log_'+l.id]||l.starred;
           let srcData={};try{srcData=JSON.parse(l.source_data||'{}');}catch(e){}
           const dur=srcData.created_at&&srcData.resolved_at?calcDur(srcData.created_at,srcData.resolved_at):'';
-          return`<div class="wl-item-wrap" id="wlw-${l.id}">
+          return `<div class="wl-item-wrap" id="wlw-${l.id}">
             <div class="wl-item" onclick="toggleWl('${l.id}')">
               <button class="star-btn ${isStar?'on':''}" onclick="event.stopPropagation();toggleStar('log',${l.id})" style="font-size:17px">★</button>
               <div class="wl-desc">${l.content}</div>
@@ -1458,7 +1459,7 @@ function renderWorkLog(){
             </div>
           </div>`;
         }).join('')}
-      </div>`;
+      </div>`; 
     }).join('')}
   </div>`;
 }
