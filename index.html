@@ -251,10 +251,23 @@ textarea.ie-val{resize:vertical;min-height:60px}
 .wl-mode-btn:hover,.wl-mode-btn.on{background:var(--primary);color:#fff;border-color:var(--primary)}
 .wl-group{margin-bottom:6px}
 .wl-dh {
+  /* --- 這些是讓你變漂亮的樣式 (保留) --- */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--surface2); /* 這裡可以用原本的 surface2 */
+  border-left: 4px solid var(--primary);
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+  
+  /* --- 這些是控制位置的邏輯 (修正) --- */
   position: sticky;
-  top: 0; /* 先試試看設為 0，看它會不會回到頂部 */
+  top: 0;           /* 改成 0，確保它貼在容器最頂端 */
   z-index: 10;
-  background: var(--surface); /* 確保背景是不透明的，不然會看到下面的字 */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* 額外加一點陰影，懸浮感會更漂亮 */
 }
 .wl-dh-cnt{font-size:12px;color:var(--text3);font-weight:600}
 .wl-item{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
