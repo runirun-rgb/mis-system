@@ -1480,24 +1480,38 @@ function renderWorkLog() {
         return `<div class="wl-group">
           <div class="wl-dh">${dLabel}<span class="wl-dh-cnt">${entries.length} 筆</span></div>
           ${entries.map(l => {
-            const isStar = starred['log_' + l.id] || l.starred;
-            let srcData = {}; try { srcData = JSON.parse(l.source_data || '{}'); } catch (e) {}
-            const dur = srcData.created_at && srcData.resolved_at ? calcDur(srcData.created_at, srcData.resolved_at) : '';
+    const isStar = starred['log_' + l.id] || l.starred;
+    let srcData = {}; 
+    try { 
+        srcData = typeof l.source_data === 'string' ? JSON.parse(l.source_data) : (l.source_data || {});
+    } catch (e) {
+        console.error("解析 source_data 失敗", e);
+    }
+
+    // --- 這裡修正名稱不見的問題 ---
+    // 優先順序：日誌子類別 > 原報修單設備名稱 > 日誌主類別 > 預設名稱
+    const displayName = l.subtype || srcData.device || l.type || '一般紀錄';
+    
+    // 內容顯示：如果 content 是空的，就抓 srcData 的內容
+    const displayContent = l.content || srcData.description || '（無描述內容）';
+    const dur = srcData.created_at && srcData.resolved_at ? calcDur(srcData.created_at, srcData.resolved_at) : '';
+
+    return `<div class="wl-item-wrap" id="wlw-${l.id}">
+        <div class="wl-item" onclick="toggleWl('${l.id}')">
+            <button class="star-btn ${isStar ? 'on' : ''}" onclick="event.stopPropagation();toggleStar('log',${l.id})" style="font-size:17px">★</button>
             
-            return `<div class="wl-item-wrap" id="wlw-${l.id}">
-              <div class="wl-item" onclick="toggleWl('${l.id}')">
-                <button class="star-btn ${isStar ? 'on' : ''}" onclick="event.stopPropagation();toggleStar('log',${l.id})" style="font-size:17px">★</button>
-                <div class="wl-desc">${l.content}</div>
-                <div class="wl-tags">
-                  <span class="badge bb">${l.subtype || l.type || ''}</span>
-                  <span class="badge ${l.type === '報修' ? 'bg' : 'bb'}">${l.type === '報修' ? '已解決' : '已完成'}</span>
-                </div>
-              </div>
-              <div class="wl-body" id="wlb-${l.id}">
-                ${renderLogDetail(l, srcData, dur)}
-              </div>
-            </div>`;
-          }).join('')}
+            <div class="wl-desc">${displayContent}</div>
+            
+            <div class="wl-tags">
+                <span class="badge bb">${displayName}</span>
+                <span class="badge ${l.type === '報修' ? 'bg' : 'bb'}">${l.type === '報修' ? '已解決' : '已完成'}</span>
+            </div>
+        </div>
+        <div class="wl-body" id="wlb-${l.id}">
+            ${renderLogDetail(l, srcData, dur)}
+        </div>
+    </div>`;
+}).join('')}
         </div>`;
       }).join('')}
   </div>`;
