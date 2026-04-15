@@ -1175,6 +1175,9 @@ async function saveRepair(){
 
   closeMo('mo-repair');
   renderRepairs(); renderCalendar(); renderToday();
+
+  await init(); // 重新向 Supabase 抓取最新資料
+  renderAll();  // 重新渲染畫面
 }
 
 async function saveRepairInline(id){
@@ -1406,63 +1409,82 @@ function setWlMode(m){
   renderWorkLog();
 }
 
-function renderWorkLog(){
-  const tf=document.getElementById('wl-ft')?.value||'';
-  const sf=document.getElementById('wl-fstar')?.value||'';
-  const today=new Date();
-  const thisM=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
-  const lastD=new Date(today.getFullYear(),today.getMonth(),0);
-  const lastM=`${lastD.getFullYear()}-${String(lastD.getMonth()+1).padStart(2,'0')}`;
-  const customM=document.getElementById('wl-custom-month')?.value||'';
+function renderWorkLog() {
+  const tf = document.getElementById('wl-ft')?.value || '';
+  const sf = document.getElementById('wl-fstar')?.value || '';
+  const today = new Date();
+  const thisM = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  const lastD = new Date(today.getFullYear(), today.getMonth(), 0);
+  const lastM = `${lastD.getFullYear()}-${String(lastD.getMonth() + 1).padStart(2, '0')}`;
+  const customM = document.getElementById('wl-custom-month')?.value || '';
 
-  let f=logs.filter(l=>{
-    if(wlMode==='this'&&!l.log_date?.startsWith(thisM))return false;
-    if(wlMode==='last'&&!l.log_date?.startsWith(lastM))return false;
-    if(wlMode==='custom'&&customM&&!l.log_date?.startsWith(customM))return false;
-    if(tf&&l.type!==tf)return false;
-    if(sf==='1'&&!l.starred&&!starred['log_'+l.id])return false;
+  // 1. 篩選邏輯
+  let f = logs.filter(l => {
+    if (wlMode === 'this' && !l.log_date?.startsWith(thisM)) return false;
+    if (wlMode === 'last' && !l.log_date?.startsWith(lastM)) return false;
+    if (wlMode === 'custom' && customM && !l.log_date?.startsWith(customM)) return false;
+    if (tf && l.type !== tf) return false;
+    if (sf === '1' && !l.starred && !starred['log_' + l.id]) return false;
     return true;
   });
 
-  // group by date
-  const byDay={};
-  f.forEach(l=>{const d=l.log_date||'未知';if(!byDay[d])byDay[d]=[];byDay[d].push(l);});
+  const el = document.getElementById('wl-list');
+  if (!el) return;
+  if (!f.length) {
+    el.innerHTML = `<div style="text-align:center;padding:36px;color:var(--text3)">📭 此條件下沒有紀錄</div>`;
+    return;
+  }
 
-  const el=document.getElementById('wl-list');
-  if(!f.length){el.innerHTML=`<div style="text-align:center;padding:36px;color:var(--text3)">📭 此條件下沒有紀錄</div>`;return;}
+  // 2. 分組邏輯
+  const byDay = {};
+  f.forEach(l => {
+    const d = l.log_date || '未知';
+    if (!byDay[d]) byDay[d] = [];
+    byDay[d].push(l);
+  });
 
-  const days=['日','一','二','三','四','五','六'];
-  const typeC={報修:'var(--accent)',專案:'var(--primary)',手動:'var(--text3)'};
+  const days = ['日', '一', '二', '三', '四', '五', '六'];
 
-el.innerHTML=`<div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden">
-    ${Object.entries(byDay).map(([date,entries])=>{
-      const ts=date!=='未知'?new Date(date):null;
-      const dLabel=ts?`${ts.getFullYear()}年${ts.getMonth()+1}月${ts.getDate()}日（週${days[ts.getDay()]}）`:'未知日期';
-      
-      return `<div class="wl-group">
-        <div class="wl-dh">${dLabel}<span class="wl-dh-cnt">${entries.length} 筆</span></div>
-        ${entries.map(l=>{
-          const isStar=starred['log_'+l.id]||l.starred;
-          let srcData={};try{srcData=JSON.parse(l.source_data||'{}');}catch(e){}
-          const dur=srcData.created_at&&srcData.resolved_at?calcDur(srcData.created_at,srcData.resolved_at):'';
-          return `<div class="wl-item-wrap" id="wlw-${l.id}">
-            <div class="wl-item" onclick="toggleWl('${l.id}')">
-              <button class="star-btn ${isStar?'on':''}" onclick="event.stopPropagation();toggleStar('log',${l.id})" style="font-size:17px">★</button>
-              <div class="wl-desc">${l.content}</div>
-              <div class="wl-tags">
-                <span class="badge bb">${l.subtype||l.type||''}</span>
-                <span class="badge ${l.type==='報修'?'bg':'bb'}">${l.type==='報修'?'已解決':'已完成'}</span>
+  // 3. 渲染邏輯 (加入排序與日期修正)
+  el.innerHTML = `<div style="background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden">
+    ${Object.entries(byDay)
+      .sort((a, b) => {
+        if (a[0] === '未知') return 1;
+        if (b[0] === '未知') return -1;
+        // 修正排序：確保日期降序 (最新的在最上面)
+        return new Date(b[0].replace(/-/g, '/')) - new Date(a[0].replace(/-/g, '/'));
+      })
+      .map(([date, entries]) => {
+        // 修正時區偏移：使用 / 替代 -
+        const ts = date !== '未知' ? new Date(date.replace(/-/g, '/')) : null;
+        const dLabel = ts ? `${ts.getFullYear()}年${ts.getMonth() + 1}月${ts.getDate()}日（週${days[ts.getDay()]}）` : '未知日期';
+
+        return `<div class="wl-group">
+          <div class="wl-dh">${dLabel}<span class="wl-dh-cnt">${entries.length} 筆</span></div>
+          ${entries.map(l => {
+            const isStar = starred['log_' + l.id] || l.starred;
+            let srcData = {}; try { srcData = JSON.parse(l.source_data || '{}'); } catch (e) {}
+            const dur = srcData.created_at && srcData.resolved_at ? calcDur(srcData.created_at, srcData.resolved_at) : '';
+            
+            return `<div class="wl-item-wrap" id="wlw-${l.id}">
+              <div class="wl-item" onclick="toggleWl('${l.id}')">
+                <button class="star-btn ${isStar ? 'on' : ''}" onclick="event.stopPropagation();toggleStar('log',${l.id})" style="font-size:17px">★</button>
+                <div class="wl-desc">${l.content}</div>
+                <div class="wl-tags">
+                  <span class="badge bb">${l.subtype || l.type || ''}</span>
+                  <span class="badge ${l.type === '報修' ? 'bg' : 'bb'}">${l.type === '報修' ? '已解決' : '已完成'}</span>
+                </div>
               </div>
-            </div>
-            <div class="wl-body" id="wlb-${l.id}">
-              ${renderLogDetail(l,srcData,dur)}
-            </div>
-          </div>`;
-        }).join('')}
-      </div>`; 
-    }).join('')}
+              <div class="wl-body" id="wlb-${l.id}">
+                ${renderLogDetail(l, srcData, dur)}
+              </div>
+            </div>`;
+          }).join('')}
+        </div>`;
+      }).join('')}
   </div>`;
 }
+
 
 function renderLogDetail(l,src,dur){
   return`<div class="ie-row">
