@@ -1476,41 +1476,42 @@ function renderWorkLog() {
 
         return `<div class="wl-group">
           <div class="wl-dh">${dLabel}<span class="wl-dh-cnt">${entries.length} 筆</span></div>
-          ${entries.map(l => {
-            const isStar = starred['log_' + l.id] || l.starred;
-            // 判斷這筆是日誌還是報修單
-            const isLog = !!l.log_date; 
-            
-            let srcData = {}; 
-            try { 
-                srcData = typeof l.source_data === 'string' ? JSON.parse(l.source_data) : (l.source_data || l);
-            } catch (e) { srcData = l; }
+${entries.map(l => {
+    // 1. 確保 ID 是一個乾淨的字串，避免轉義字元問題
+    const safeId = String(l.id).replace(/\\/g, ''); 
+    const isStar = starred['log_' + safeId] || l.starred;
+    const isLog = !!l.log_date; 
+    
+    let srcData = {}; 
+    try { 
+        srcData = typeof l.source_data === 'string' ? JSON.parse(l.source_data) : (l.source_data || l);
+    } catch (e) { srcData = l; }
 
-            const displayName = l.subtype || srcData.device || l.type || '一般紀錄';
-            const displayContent = l.content || srcData.description || '處理中...';
-            const timeStr = (l.log_date || l.created_at || '').substring(11, 16);
+    const displayName = l.subtype || srcData.device || l.type || '一般紀錄';
+    const displayContent = (l.content || srcData.description || '處理中...').replace(/\\/g, ''); // 移除內容中的反斜線
+    const timeStr = (l.log_date || l.created_at || '').substring(11, 16);
 
-            // 這裡動態決定點擊動作：若是日誌則展開詳情，若是報修單則開彈窗
-            const clickAction = isLog ? `toggleWl('${l.id}')` : `showRepairDetail('${l.id}')`;
+    // 💡 修正：使用引號包裹 ID，並確保點擊動作名稱正確
+    const clickAction = isLog ? `toggleWl('${safeId}')` : `showRepairDetail('${safeId}')`;
 
-            return `<div class="wl-item-wrap" id="wlw-${l.id}">
-                <div class="wl-item" onclick="${clickAction}">
-                    <button class="star-btn ${isStar ? 'on' : ''}" onclick="event.stopPropagation();toggleStar('log',${l.id})" style="font-size:17px">★</button>
-                    <div style="font-size:12px;color:var(--text3);min-width:45px">${timeStr}</div>
-                    <div class="wl-desc">${displayContent}</div>
-                    <div class="wl-tags">
-                        <span class="badge bb">${displayName}</span>
-                        <span class="badge ${!isLog ? 'bg-warn' : (l.type === '報修' ? 'bg' : 'bb')}">
-                            ${!isLog ? '處理中' : (l.type === '報修' ? '已解決' : '已完成')}
-                        </span>
-                    </div>
-                </div>
-                <div class="wl-body" id="wlb-${l.id}">
-                    ${isLog ? renderLogDetail(l, srcData, '') : ''}
-                </div>
-            </div>`;
-          }).join('')}
-        </div>`;
+    return `<div class="wl-item-wrap" id="wlw-${safeId}">
+        <div class="wl-item" onclick="${clickAction}">
+            <button class="star-btn ${isStar ? 'on' : ''}" onclick="event.stopPropagation();toggleStar('log','${safeId}')" style="font-size:17px">★</button>
+            <div style="font-size:12px;color:var(--text3);min-width:45px">${timeStr}</div>
+            <div class="wl-desc">${displayContent}</div>
+            <div class="wl-tags">
+                <span class="badge bb">${displayName}</span>
+                <span class="badge ${!isLog ? 'bg-warn' : (l.type === '報修' ? 'bg' : 'bb')}">
+                    ${!isLog ? '處理中' : (l.type === '報修' ? '已解決' : '已完成')}
+                </span>
+            </div>
+        </div>
+        <div class="wl-body" id="wlb-${safeId}" style="display:none">
+            ${isLog ? renderLogDetail(l, srcData, '') : ''}
+        </div>
+    </div>`;
+    }).join('')}        
+      </div>`;
       }).join('')}
   </div>`;
 }
