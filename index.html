@@ -1477,26 +1477,32 @@ function renderWorkLog() {
         return `<div class="wl-group">
           <div class="wl-dh">${dLabel}<span class="wl-dh-cnt">${entries.length} 筆</span></div>
 ${entries.map(l => {
-    // 1. 確保 ID 是一個乾淨的字串，避免轉義字元問題
-    const safeId = String(l.id).replace(/\\/g, ''); 
-    const isStar = starred['log_' + safeId] || l.starred;
+    // 1. 強制處理 ID：確保它是字串且不含任何反斜線，避免轉義錯誤
+    const rawId = String(l.id).replace(/\\/g, ''); 
+    const isStar = starred['log_' + rawId] || l.starred;
     const isLog = !!l.log_date; 
     
     let srcData = {}; 
     try { 
+        // 確保 source_data 解析不會因為特殊字元崩潰
         srcData = typeof l.source_data === 'string' ? JSON.parse(l.source_data) : (l.source_data || l);
     } catch (e) { srcData = l; }
 
-    const displayName = l.subtype || srcData.device || l.type || '一般紀錄';
-    const displayContent = (l.content || srcData.description || '處理中...').replace(/\\/g, ''); // 移除內容中的反斜線
+    // 2. 處理內容字串：把內容中的反斜線先清掉，防止顯示時變形
+    const displayContent = (l.content || srcData.description || '處理中...')
+                             .replace(/\\/g, ''); 
+    
+    const displayName = (l.subtype || srcData.device || l.type || '一般紀錄')
+                          .replace(/\\/g, '');
+
     const timeStr = (l.log_date || l.created_at || '').substring(11, 16);
 
-    // 💡 修正：使用引號包裹 ID，並確保點擊動作名稱正確
-    const clickAction = isLog ? `toggleWl('${safeId}')` : `showRepairDetail('${safeId}')`;
+    // 3. 關鍵修正：確保 onclick 的參數帶入時是純字串，且不包含會引起誤讀的字元
+    const clickAction = isLog ? `toggleWl('${rawId}')` : `showRepairDetail('${rawId}')`;
 
-    return `<div class="wl-item-wrap" id="wlw-${safeId}">
+    return `<div class="wl-item-wrap" id="wlw-${rawId}">
         <div class="wl-item" onclick="${clickAction}">
-            <button class="star-btn ${isStar ? 'on' : ''}" onclick="event.stopPropagation();toggleStar('log','${safeId}')" style="font-size:17px">★</button>
+            <button class="star-btn ${isStar ? 'on' : ''}" onclick="event.stopPropagation();toggleStar('log','${rawId}')" style="font-size:17px">★</button>
             <div style="font-size:12px;color:var(--text3);min-width:45px">${timeStr}</div>
             <div class="wl-desc">${displayContent}</div>
             <div class="wl-tags">
@@ -1506,11 +1512,11 @@ ${entries.map(l => {
                 </span>
             </div>
         </div>
-        <div class="wl-body" id="wlb-${safeId}" style="display:none">
+        <div class="wl-body" id="wlb-${rawId}" style="display:none">
             ${isLog ? renderLogDetail(l, srcData, '') : ''}
         </div>
     </div>`;
-    }).join('')}        
+}).join('')}
       </div>`;
       }).join('')}
   </div>`;
