@@ -1436,13 +1436,12 @@ function renderWorkLog() {
   const lastM = `${lastD.getFullYear()}-${String(lastD.getMonth() + 1).padStart(2, '0')}`;
   const customM = document.getElementById('wl-custom-month')?.value || '';
 
-  // --- 修正 1：合併資料來源 ( logs 是已完成，repairs 是進行中 ) ---
-  // 確保無論狀態如何，只要有日期就顯示
-  const rawData = [...(logs || []), ...(repairs || [])];
+  // 1. 合併兩張表的資料：這確保搬移到日誌後，紀錄依然存在
+  const combined = [...(logs || []), ...(repairs || [])];
 
-  let f = rawData.filter(l => {
-    // 優先抓日誌日期，沒有的話抓工單建立日期
-    const d = (l.log_date || l.created_at || '').substring(0, 10); 
+  let f = combined.filter(l => {
+    // 優先使用 log_date (日誌)，其次使用 created_at (報修單)
+    const d = (l.log_date || l.created_at || '').substring(0, 10);
     if (wlMode === 'this' && !d.startsWith(thisM)) return false;
     if (wlMode === 'last' && !d.startsWith(lastM)) return false;
     if (wlMode === 'custom' && customM && !d.startsWith(customM)) return false;
@@ -1458,10 +1457,10 @@ function renderWorkLog() {
     return;
   }
 
-  // 2. 分組邏輯 (修正日期解析，避免 14 號變 13 號)
+  // 2. 按日期分組 (修正 14 號變 13 號問題)
   const byDay = {};
   f.forEach(l => {
-    const d = (l.log_date || l.created_at || '未知').substring(0, 10);
+    const d = (l.log_date || l.created_at || '未知日期').substring(0, 10);
     if (!byDay[d]) byDay[d] = [];
     byDay[d].push(l);
   });
@@ -1472,40 +1471,42 @@ function renderWorkLog() {
     ${Object.entries(byDay)
       .sort((a, b) => new Date(b[0].replace(/-/g, '/')) - new Date(a[0].replace(/-/g, '/')))
       .map(([date, entries]) => {
-        const ts = date !== '未知' ? new Date(date.replace(/-/g, '/')) : null;
+        const ts = date !== '未知日期' ? new Date(date.replace(/-/g, '/')) : null;
         const dLabel = ts ? `${ts.getFullYear()}年${ts.getMonth() + 1}月${ts.getDate()}日（週${days[ts.getDay()]}）` : '未知日期';
 
         return `<div class="wl-group">
           <div class="wl-dh">${dLabel}<span class="wl-dh-cnt">${entries.length} 筆</span></div>
           ${entries.map(l => {
             const isStar = starred['log_' + l.id] || l.starred;
+            // 判斷這筆是日誌還是報修單
+            const isLog = !!l.log_date; 
+            
             let srcData = {}; 
             try { 
                 srcData = typeof l.source_data === 'string' ? JSON.parse(l.source_data) : (l.source_data || l);
             } catch (e) { srcData = l; }
 
-            // 判斷是否為進行中 (Repairs 表的資料通常沒有 log_date)
-            const isOngoing = !l.log_date;
             const displayName = l.subtype || srcData.device || l.type || '一般紀錄';
             const displayContent = l.content || srcData.description || '處理中...';
-            
-            // 抓取精確時間 (17:27)
             const timeStr = (l.log_date || l.created_at || '').substring(11, 16);
 
+            // 這裡動態決定點擊動作：若是日誌則展開詳情，若是報修單則開彈窗
+            const clickAction = isLog ? `toggleWl('${l.id}')` : `showRepairDetail('${l.id}')`;
+
             return `<div class="wl-item-wrap" id="wlw-${l.id}">
-                <div class="wl-item" onclick="${isOngoing ? `showRepairDetail('${l.id}')` : `toggleWl('${l.id}')`}">
+                <div class="wl-item" onclick="${clickAction}">
                     <button class="star-btn ${isStar ? 'on' : ''}" onclick="event.stopPropagation();toggleStar('log',${l.id})" style="font-size:17px">★</button>
                     <div style="font-size:12px;color:var(--text3);min-width:45px">${timeStr}</div>
                     <div class="wl-desc">${displayContent}</div>
                     <div class="wl-tags">
                         <span class="badge bb">${displayName}</span>
-                        <span class="badge ${isOngoing ? 'bg-warn' : (l.type === '報修' ? 'bg' : 'bb')}">
-                            ${isOngoing ? '處理中' : (l.type === '報修' ? '已解決' : '已完成')}
+                        <span class="badge ${!isLog ? 'bg-warn' : (l.type === '報修' ? 'bg' : 'bb')}">
+                            ${!isLog ? '處理中' : (l.type === '報修' ? '已解決' : '已完成')}
                         </span>
                     </div>
                 </div>
                 <div class="wl-body" id="wlb-${l.id}">
-                    ${isOngoing ? '' : renderLogDetail(l, srcData, '')}
+                    ${isLog ? renderLogDetail(l, srcData, '') : ''}
                 </div>
             </div>`;
           }).join('')}
